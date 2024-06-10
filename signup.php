@@ -4,8 +4,11 @@ include("classes/database.php");
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
+    $firstname = $_POST['first_name'];
+    $lastname = $_POST['last_name'];
     $username = $_POST['username'];
     $password = $_POST['password'];
+    $phonenum = $_POST['pnum'];
 
     // Check if the username already exists
     $query = $pdo->prepare("SELECT COUNT(*) FROM users WHERE username = :username");
@@ -19,8 +22,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         // Insert the new user into the database
-        $query = $pdo->prepare("INSERT INTO users (email, username, password) VALUES (:email, :username, :password)");
-        $query->execute(['email' => $email, 'username' => $username, 'password' => $hashedPassword]);
+        $query = $pdo->prepare("INSERT INTO users (email, first_name, last_name, username, password, p_num) VALUES (:email, :first_name, :last_name, :username, :password, :p_num)");
+        $query->execute(['email' => $email, 'first_name' => $firstname, 'last_name' => $lastname, 'username' => $username, 'password' => $hashedPassword, 'p_num' => $phonenum]);
 
         $success = "User registered successfully!";
     }
@@ -146,16 +149,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php endif; ?>
         <form method="post">
             <div class="input-container">
-                <label for="email">Email</label>
+                <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required>
             </div>
             <div class="input-container">
-                <label for="username">Username</label>
+                <label for="first_name">First Name:</label>
+                <input type="first_name" id="first_name" name="first_name" required>
+            </div>
+            <div class="input-container">
+                <label for="last_name">Last Name:</label>
+                <input type="last_name" id="last_name" name="last_name" required>
+            </div>
+            <div class="input-container">
+                <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required>
             </div>
             <div class="input-container">
-                <label for="password">Password</label>
+                <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
+            </div>
+            <div class="input-container">
+                <label for="pnum">Phone Number:</label>
+                <input type="pnum" id="pnum" name="pnum" required>
             </div>
             <button type="submit">Sign Up</button>
         </form>

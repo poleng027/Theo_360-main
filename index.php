@@ -109,11 +109,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .signup-link {
-            display: block;
+            /* display: block; */
             margin-top: 20px;
             color: #ccc;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 17px;
         }
 
         .signup-link:hover {
@@ -134,7 +134,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="password" id="password" name="password" required>
             </div>
             <button type="submit">Login</button>
-            <a href="signup.php" class="signup-link">Sign Up</a>
+            <p>Don't have an Account?<a href="signup.php" class="signup-link"> Sign Up</a></p>
         </form>
     </div>
 </body>
