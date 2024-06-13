@@ -118,28 +118,46 @@
                         <?php
                         include("classes/database.php");
                         try {
-                            $query = $pdo->query("SELECT * FROM bookings WHERE status = 'approved'");
+                            $query = $pdo->query("SELECT	
+                            bookings.booking_id,
+                            users.user_id,
+                            services.service_id,
+                            bookings.date,
+                            bookings.time,
+                            bookings.location,
+                            bookings.event_title,
+                            bookings.status,
+                            users.first_name,
+                            users.last_name,
+                            users.username,
+                            users.email,
+                            users.p_num
+                            FROM 
+                            bookings
+                        
+                        INNER JOIN users on bookings.user_id = users.user_id
+                        INNER JOIN services on bookings.service_id = services.service_id WHERE status = 'approved'");
                             while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
                                 echo "<tr>";
                                 echo "<td>" . htmlspecialchars($row['username']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['firstname']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['lastname']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['first_name']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['last_name']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['email']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['phone']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['p_num']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['date']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['time']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['location']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['event_title']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['package']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['service_id']) . "</td>";
                                 echo "<td>
-                                    <select class='status-dropdown' onchange='updateStatus(this, " . $row['id'] . ")'>
+                                    <select class='status-dropdown' onchange='updateStatus(this, " . $row['booking_id'] . ")'>
                                         <option value='approved'" . ($row['status'] == 'approved' ? ' selected' : '') . ">Approved</option>
                                         <option value='pending'" . ($row['status'] == 'pending' ? ' selected' : '') . ">Pending</option>
                                         <option value='finished'" . ($row['status'] == 'finished' ? ' selected' : '') . ">Finished</option>
                                     </select>
-                                    <button onclick='saveStatus(this, " . $row['id'] . ")'>Save</button>
+                                    <button onclick='saveStatus(this, " . $row['booking_id'] . ")'>Save</button>
                                 </td>";
-                                echo "<td><button onclick='deleteReservation(" . $row['id'] . ")'>Delete</button></td>";
+                                echo "<td><button onclick='deleteReservation(" . $row['booking_id'] . ")'>Delete</button></td>";
                                 echo "</tr>";
                             }
                         } catch (Exception $e) {
@@ -171,28 +189,46 @@
                     <tbody id="pending-reservations">
                         <?php
                         try {
-                            $query = $pdo->query("SELECT * FROM bookings WHERE status = 'pending'");
+                            $query = $pdo->query("SELECT	
+                            bookings.booking_id,
+                            users.user_id,
+                            services.service_id,
+                            bookings.date,
+                            bookings.time,
+                            bookings.location,
+                            bookings.event_title,
+                            bookings.status,
+                            users.first_name,
+                            users.last_name,
+                            users.username,
+                            users.email,
+                            users.p_num
+                            FROM 
+                            bookings
+                        
+                        INNER JOIN users on bookings.user_id = users.user_id
+                        INNER JOIN services on bookings.service_id = services.service_id WHERE status = 'pending'");
                             while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
                                 echo "<tr>";
                                 echo "<td>" . htmlspecialchars($row['username']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['firstname']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['lastname']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['first_name']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['last_name']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['email']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['phone']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['p_num']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['date']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['time']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['location']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['event_title']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['package']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['service_id']) . "</td>";
                                 echo "<td>
-                                    <select class='status-dropdown' onchange='updateStatus(this, " . $row['id'] . ")'>
+                                    <select class='status-dropdown' onchange='updateStatus(this, " . $row['booking_id'] . ")'>
                                         <option value='approved'" . ($row['status'] == 'approved' ? ' selected' : '') . ">Approved</option>
                                         <option value='pending'" . ($row['status'] == 'pending' ? ' selected' : '') . ">Pending</option>
                                         <option value='finished'" . ($row['status'] == 'finished' ? ' selected' : '') . ">Finished</option>
                                     </select>
-                                    <button onclick='saveStatus(this, " . $row['id'] . ")'>Save</button>
+                                    <button onclick='saveStatus(this, " . $row['booking_id'] . ")'>Save</button>
                                 </td>";
-                                echo "<td><button onclick='deleteReservation(" . $row['id'] . ")'>Delete</button></td>";
+                                echo "<td><button onclick='deleteReservation(" . $row['booking_id'] . ")'>Delete</button></td>";
                                 echo "</tr>";
                             }
                         } catch (Exception $e) {
@@ -224,28 +260,46 @@
                     <tbody id="finished-reservations">
                         <?php
                         try {
-                            $query = $pdo->query("SELECT * FROM bookings WHERE status = 'finished'");
+                            $query = $pdo->query("SELECT	
+                            bookings.booking_id,
+                            users.user_id,
+                            services.service_id,
+                            bookings.date,
+                            bookings.time,
+                            bookings.location,
+                            bookings.event_title,
+                            bookings.status,
+                            users.first_name,
+                            users.last_name,
+                            users.username,
+                            users.email,
+                            users.p_num
+                            FROM 
+                            bookings
+                        
+                        INNER JOIN users on bookings.user_id = users.user_id
+                        INNER JOIN services on bookings.service_id = services.service_id WHERE status = 'finished'");
                             while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
                                 echo "<tr>";
                                 echo "<td>" . htmlspecialchars($row['username']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['firstname']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['lastname']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['first_name']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['last_name']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['email']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['phone']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['p_num']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['date']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['time']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['location']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['event_title']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['package']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['service_id']) . "</td>";
                                 echo "<td>
-                                    <select class='status-dropdown' onchange='updateStatus(this, " . $row['id'] . ")'>
+                                    <select class='status-dropdown' onchange='updateStatus(this, " . $row['booking_id'] . ")'>
                                         <option value='approved'" . ($row['status'] == 'approved' ? ' selected' : '') . ">Approved</option>
                                         <option value='pending'" . ($row['status'] == 'pending' ? ' selected' : '') . ">Pending</option>
                                         <option value='finished'" . ($row['status'] == 'finished' ? ' selected' : '') . ">Finished</option>
                                     </select>
-                                    <button onclick='saveStatus(this, " . $row['id'] . ")'>Save</button>
+                                    <button onclick='saveStatus(this, " . $row['booking_id'] . ")'>Save</button>
                                 </td>";
-                                echo "<td><button onclick='deleteReservation(" . $row['id'] . ")'>Delete</button></td>";
+                                echo "<td><button onclick='deleteReservation(" . $row['booking_id'] . ")'>Delete</button></td>";
                                 echo "</tr>";
                             }
                         } catch (Exception $e) {
@@ -268,7 +322,7 @@
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "update_status.php", true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.send("id=" + reservationId + "&status=" + status);
+        xhr.send("booking_id=" + reservationId + "&status=" + status);
     }
 
     function saveStatus(buttonElement, reservationId) {
@@ -289,7 +343,7 @@
                 }
             }
         }
-        xhr.send("id=" + reservationId + "&status=" + status);
+        xhr.send("booking_id=" + reservationId + "&status=" + status);
     }
 
     function deleteReservation(reservationId) {
@@ -302,7 +356,7 @@
                     location.reload();
                 }
             }
-            xhr.send("id=" + reservationId);
+            xhr.send("booking_id=" + reservationId);
         }
     }
 </script>

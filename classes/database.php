@@ -1,7 +1,7 @@
 <?php
 // // Database configuration
 $host = '127.0.0.1';
-$db = 'theo_360';
+$db = 'theo360';
 $user = 'root';
 $pass = '';
 

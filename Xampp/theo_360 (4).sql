@@ -31,22 +31,16 @@ USE `theo_360`;
 
 DROP TABLE IF EXISTS `bookings`;
 CREATE TABLE `bookings` (
-  `id` int(11) NOT NULL,
-  `username` varchar(255) DEFAULT NULL,
-  `firstname` varchar(255) DEFAULT NULL,
-  `lastname` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `phone` varchar(255) DEFAULT NULL,
+  `booking_id` int(11) NOT NULL,
+  'user_id' int not null,
+  'sevice_id' int not null,
   `date` date DEFAULT NULL,
   `time` time DEFAULT NULL,
   `location` varchar(255) DEFAULT NULL,
   `indoor_outdoor` varchar(50) DEFAULT NULL,
   `event_title` varchar(255) DEFAULT NULL,
-  `package` varchar(255) DEFAULT NULL,
-  `payment_method` varchar(50) DEFAULT NULL,
-  `requests` text DEFAULT NULL,
   `status` varchar(255) NOT NULL DEFAULT 'pending'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+); ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `bookings`
@@ -65,11 +59,11 @@ INSERT INTO `bookings` (`id`, `username`, `firstname`, `lastname`, `email`, `pho
 
 DROP TABLE IF EXISTS `feedback`;
 CREATE TABLE `feedback` (
-  `id` int(11) NOT NULL,
+  `feedback_id` int(11) NOT NULL,
   `username` varchar(255) NOT NULL,
   `feedback` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+); ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `feedback`
@@ -98,7 +92,7 @@ CREATE TABLE `services` (
   `service_name` varchar(255) NOT NULL,
   `service_desc` text NOT NULL,
   `service_price` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+); ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `services`
@@ -121,7 +115,7 @@ CREATE TABLE `users` (
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `role` enum('user','admin') DEFAULT 'user'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+); ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
@@ -143,13 +137,13 @@ INSERT INTO `users` (`id`, `email`, `username`, `password`, `role`) VALUES
 -- Indexes for table `bookings`
 --
 ALTER TABLE `bookings`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`booking_id`);
 
 --
 -- Indexes for table `feedback`
 --
 ALTER TABLE `feedback`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`feedback_id`);
 
 --
 -- Indexes for table `services`
@@ -161,7 +155,7 @@ ALTER TABLE `services`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
+  ADD PRIMARY KEY (`user_id`),
   ADD UNIQUE KEY `UC_Username` (`username`);
 
 --
@@ -172,13 +166,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `feedback`
 --
 ALTER TABLE `feedback`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `feedback_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `services`
@@ -190,7 +184,7 @@ ALTER TABLE `services`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

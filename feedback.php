@@ -12,8 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $feedback = $_POST['feedback'];
 
     // Database configuration
-    $host = '127.0.0.1:4306';
-    $db = 'theo_360';
+    $host = '127.0.0.1';
+    $db = 'theo360';
     $user = 'root';
     $pass = '';
 
