@@ -1,29 +1,82 @@
 <?php
 include 'classes/database.php'; // Database connection file
 
-// Fetch finished bookings
-$finishedQuery = "SELECT firstname, lastname, package, payment_method FROM bookings WHERE status = 'finished'";
-$finishedStmt = $pdo->prepare($finishedQuery);
-$finishedStmt->execute();
-$finishedBookings = $finishedStmt->fetchAll(PDO::FETCH_ASSOC);
+// Handle form submissions
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['delete'])) {
+        $bookingId = $_POST['booking_id'];
+        $deleteQuery = "DELETE FROM bookings WHERE booking_id = :booking_id";
+        $stmt = $pdo->prepare($deleteQuery);
+        $stmt->execute(['booking_id' => $bookingId]);
+    }
 
-// Fetch pending bookings
-$pendingQuery = "SELECT firstname, lastname, package, payment_method FROM bookings WHERE status = 'pending'";
-$pendingStmt = $pdo->prepare($pendingQuery);
-$pendingStmt->execute();
-$pendingBookings = $pendingStmt->fetchAll(PDO::FETCH_ASSOC);
+    if (isset($_POST['save'])) {
+        $bookingId = $_POST['booking_id'];
+        $status = $_POST['status'];
+        $updateBookingQuery = "UPDATE bookings SET status = :status WHERE booking_id = :booking_id";
+        $stmt = $pdo->prepare($updateBookingQuery);
+        $stmt->execute(['status' => $status, 'booking_id' => $bookingId]);
 
-// Fetch total payment for finished bookings
-$totalFinishedQuery = "SELECT SUM(REPLACE(SUBSTRING_INDEX(package, ' - PHP ', -1), ',', '')) AS total_payment FROM bookings WHERE status = 'finished'";
-$totalFinishedStmt = $pdo->prepare($totalFinishedQuery);
-$totalFinishedStmt->execute();
-$totalFinishedRow = $totalFinishedStmt->fetch(PDO::FETCH_ASSOC);
-$totalFinishedPayment = $totalFinishedRow['total_payment'];
+        $paymentStatus = $status === 'finished' ? 'finished' : 'pending';
+        $updatePaymentQuery = "UPDATE payments SET payment_status = :payment_status WHERE booking_id = :booking_id";
+        $stmt = $pdo->prepare($updatePaymentQuery);
+        $stmt->execute(['payment_status' => $paymentStatus, 'booking_id' => $bookingId]);
+    }
+
+    // Redirect to avoid resubmission
+    header("Location: payments.php");
+    exit();
+}
+
+try {
+    // Fetch finished bookings
+    $finishedQuery = "
+        SELECT b.booking_id, u.first_name, u.last_name, s.service_name, p.payment_method, p.payment_status
+        FROM bookings b
+        JOIN users u ON b.user_id = u.user_id
+        JOIN services s ON b.service_id = s.service_id
+        JOIN payments p ON b.booking_id = p.booking_id
+        WHERE p.payment_status = 'finished'
+    ";
+    $finishedStmt = $pdo->prepare($finishedQuery);
+    $finishedStmt->execute();
+    $finishedBookings = $finishedStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Fetch pending bookings
+    $pendingQuery = "
+        SELECT b.booking_id, u.first_name, u.last_name, s.service_name, p.payment_method, p.payment_status
+        FROM bookings b
+        JOIN users u ON b.user_id = u.user_id
+        JOIN services s ON b.service_id = s.service_id
+        JOIN payments p ON b.booking_id = p.booking_id
+        WHERE p.payment_status = 'pending'
+    ";
+    $pendingStmt = $pdo->prepare($pendingQuery);
+    $pendingStmt->execute();
+    $pendingBookings = $pendingStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Fetch total payment for finished bookings
+    $totalFinishedQuery = "
+        SELECT SUM(s.service_price) AS total_payment 
+        FROM bookings b
+        JOIN services s ON b.service_id = s.service_id
+        JOIN payments p ON b.booking_id = p.booking_id
+        WHERE p.payment_status = 'finished'
+    ";
+    $totalFinishedStmt = $pdo->prepare($totalFinishedQuery);
+    $totalFinishedStmt->execute();
+    $totalFinishedRow = $totalFinishedStmt->fetch(PDO::FETCH_ASSOC);
+    $totalFinishedPayment = $totalFinishedRow['total_payment'] ?? 0; // Default to 0 if no payment found
+
+} catch (PDOException $e) {
+    // Handle any PDO exceptions here
+    echo "Error: " . $e->getMessage();
+    die();
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -68,7 +121,6 @@ $totalFinishedPayment = $totalFinishedRow['total_payment'];
         }
     </style>
 </head>
-
 <body>
     <!-- =============== Navigation ================ -->
     <div class="container">
@@ -82,16 +134,14 @@ $totalFinishedPayment = $totalFinishedRow['total_payment'];
                         <span class="title">Theo 360</span>
                     </a>
                 </li>
-
                 <li>
-                    <a href="index.php">
+                    <a href="admin.php">
                         <span class="icon">
                             <ion-icon name="home"></ion-icon>
                         </span>
                         <span class="title">Dashboard</span>
                     </a>
                 </li>
-
                 <li>
                     <a href="reservation.php">
                         <span class="icon">
@@ -100,7 +150,6 @@ $totalFinishedPayment = $totalFinishedRow['total_payment'];
                         <span class="title">Reservation</span>
                     </a>
                 </li>
-
                 <li>
                     <a href="service.php">
                         <span class="icon">
@@ -109,7 +158,6 @@ $totalFinishedPayment = $totalFinishedRow['total_payment'];
                         <span class="title">Services</span>
                     </a>
                 </li>
-
                 <li>
                     <a href="payments.php">
                         <span class="icon">
@@ -118,7 +166,6 @@ $totalFinishedPayment = $totalFinishedRow['total_payment'];
                         <span class="title">Payments</span>
                     </a>
                 </li>
-
                 <li>
                     <a href="password.php">
                         <span class="icon">
@@ -127,7 +174,6 @@ $totalFinishedPayment = $totalFinishedRow['total_payment'];
                         <span class="title">Password</span>
                     </a>
                 </li>
-
                 <li>
                     <a href="index.php">
                         <span class="icon">
@@ -157,26 +203,47 @@ $totalFinishedPayment = $totalFinishedRow['total_payment'];
                     <img src="assets/imgs/customer01.jpg" alt="">
                 </div>
             </div>
-            
+
             <!-- =============== Main Content ================ -->
             <div class="main-content">
-            <h2>Pending Payments</h2>
+                <h2>Pending Payments</h2>
                 <table>
                     <thead>
                         <tr>
                             <th>Name</th>
                             <th>Pending Payment</th>
                             <th>Payment Method</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($pendingBookings as $booking): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($booking['firstname'] . ' ' . $booking['lastname']); ?></td>
-                            <td><?php echo htmlspecialchars($booking['package']); ?></td>
-                            <td><?php echo htmlspecialchars($booking['payment_method']); ?></td>
-                        </tr>
-                        <?php endforeach; ?>
+                        <?php if (!empty($pendingBookings)) : ?>
+                            <?php foreach ($pendingBookings as $booking): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($booking['first_name'] . ' ' . $booking['last_name']); ?></td>
+                                    <td><?php echo htmlspecialchars($booking['service_name']); ?></td>
+                                    <td><?php echo htmlspecialchars($booking['payment_method']); ?></td>
+                                    <td>
+                                        <form method="post" action="payments.php" style="display:inline;">
+                                            <input type="hidden" name="booking_id" value="<?php echo htmlspecialchars($booking['booking_id']); ?>">
+                                            <select name="status">
+                                                <option value="pending" <?php echo $booking['payment_status'] === 'pending' ? 'selected' : ''; ?>>Pending</option>
+                                                <option value="finished" <?php echo $booking['payment_status'] === 'finished' ? 'selected' : ''; ?>>Finished</option>
+                                            </select>
+                                            <button type="submit" name="save">Save</button>
+                                        </form>
+                                        <form method="post" action="payments.php" style="display:inline;">
+                                            <input type="hidden" name="booking_id" value="<?php echo htmlspecialchars($booking['booking_id']); ?>">
+                                            <button type="submit" name="delete">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="4">No pending payments found.</td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
 
@@ -185,22 +252,43 @@ $totalFinishedPayment = $totalFinishedRow['total_payment'];
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Payment</th>
+                            <th>Finished Payment</th>
                             <th>Payment Method</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($finishedBookings as $booking): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($booking['firstname'] . ' ' . $booking['lastname']); ?></td>
-                            <td><?php echo htmlspecialchars($booking['package']); ?></td>
-                            <td><?php echo htmlspecialchars($booking['payment_method']); ?></td>
-                        </tr>
-                        <?php endforeach; ?>
+                        <?php if (!empty($finishedBookings)) : ?>
+                            <?php foreach ($finishedBookings as $booking): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($booking['first_name'] . ' ' . $booking['last_name']); ?></td>
+                                    <td><?php echo htmlspecialchars($booking['service_name']); ?></td>
+                                    <td><?php echo htmlspecialchars($booking['payment_method']); ?></td>
+                                    <td>
+                                        <form method="post" action="payments.php" style="display:inline;">
+                                            <input type="hidden" name="booking_id" value="<?php echo htmlspecialchars($booking['booking_id']); ?>">
+                                            <select name="status">
+                                                <option value="pending" <?php echo $booking['payment_status'] === 'pending' ? 'selected' : ''; ?>>Pending</option>
+                                                <option value="finished" <?php echo $booking['payment_status'] === 'finished' ? 'selected' : ''; ?>>Finished</option>
+                                            </select>
+                                            <button type="submit" name="save">Save</button>
+                                        </form>
+                                        <form method="post" action="payments.php" style="display:inline;">
+                                            <input type="hidden" name="booking_id" value="<?php echo htmlspecialchars($booking['booking_id']); ?>">
+                                            <button type="submit" name="delete">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="4">No finished payments found.</td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
 
-                <h3>Total Payment: PHP <?php echo number_format($totalFinishedPayment, 2); ?></h3>  
+                <h3>Total Payment: PHP <?php echo number_format($totalFinishedPayment, 2); ?></h3>
             </div>
         </div>
     </div>

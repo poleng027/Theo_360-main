@@ -42,6 +42,10 @@ $services = $pdo->query("SELECT * FROM services")->fetchAll(PDO::FETCH_ASSOC);
     <!-- ======= Styles ====== -->
     <link rel="stylesheet" href="./assets/css/style.css?v=<?php echo time(); ?>">
     <style>
+        h3 {
+            color: white;
+
+        }
 
         table {
             width: 100%;

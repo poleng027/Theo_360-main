@@ -6,11 +6,16 @@
     <title>Video and Text Layout</title>
 </head>
 <style>
-            body {
+            * {
+            box-sizing: border-box;
+        }
+
+
+            body {         
+            background-image: url(./assets/imgs/background.png); 
             margin: 0;
             padding: 0;
             height: 100vh;
-            background-image: url(./assets/imgs/background.png); /* Replace with your background image URL */
             background-size: cover;
             background-position: center;
             display: flex;
@@ -18,6 +23,7 @@
             justify-content: center;
             font-family: Arial, sans-serif;
             color: #fff;
+            overflow: hidden;
         }
 
         .container {

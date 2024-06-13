@@ -51,6 +51,14 @@
         .card .iconBx ion-icon {
             color: #00bcd4;
         }
+
+        .search {
+            display: none;
+        }
+
+        .user {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -128,17 +136,6 @@
             <div class="topbar">
                 <div class="toggle">
                     <ion-icon name="menu-outline"></ion-icon>
-                </div>
-
-                <div class="search">
-                    <label>
-                        <input type="text" placeholder="Search here">
-                        <ion-icon name="search-outline"></ion-icon>
-                    </label>
-                </div>
-
-                <div class="user">
-                    <img src="assets/imgs/customer01.jpg" alt="">
                 </div>
             </div>
 
@@ -279,7 +276,8 @@
             options: {
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero
+                        : true
                     }
                 }
             }
@@ -288,7 +286,7 @@
 
     <!-- ====== ionicons ======= -->
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
 </body>
 </html>

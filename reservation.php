@@ -13,6 +13,13 @@
         .section.active {
             display: block;
         }
+        .main {
+            display: flex;
+            flex-direction: column;
+        }
+        .main .container {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -78,245 +85,237 @@
                 </li>
             </ul>
         </div>
-        <!-- ========================= Main ==================== -->
-        <div class="main">
-            <div class="topbar">
-                <div class="toggle">
-                    <ion-icon name="menu-outline"></ion-icon>
-                </div>
-                <div class="search">
-                    <label>
-                        <input type="text" placeholder="Search here">
-                        <ion-icon name="search-outline"></ion-icon>
-                    </label>
-                </div>
-                <div class="user">
-                    <img src="assets/imgs/customer01.jpg" alt="">
-                </div>
-            </div>
-            <!-- ======================= Reservations ================== -->
-            <div class="container" id="approved-section" class="section">
-                <h1>Approved Reservations</h1>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Location</th>
-                            <th>Event Title</th>
-                            <th>Package</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="approved-reservations">
-                        <?php
-                        include("classes/database.php");
-                        try {
-                            $query = $pdo->query("SELECT	
-                            bookings.booking_id,
-                            users.user_id,
-                            services.service_id,
-                            bookings.date,
-                            bookings.time,
-                            bookings.location,
-                            bookings.event_title,
-                            bookings.status,
-                            users.first_name,
-                            users.last_name,
-                            users.username,
-                            users.email,
-                            users.p_num
-                            FROM 
-                            bookings
-                        
-                        INNER JOIN users on bookings.user_id = users.user_id
-                        INNER JOIN services on bookings.service_id = services.service_id WHERE status = 'approved'");
-                            while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-                                echo "<tr>";
-                                echo "<td>" . htmlspecialchars($row['username']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['first_name']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['last_name']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['email']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['p_num']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['date']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['time']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['location']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['event_title']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['service_id']) . "</td>";
-                                echo "<td>
-                                    <select class='status-dropdown' onchange='updateStatus(this, " . $row['booking_id'] . ")'>
-                                        <option value='approved'" . ($row['status'] == 'approved' ? ' selected' : '') . ">Approved</option>
-                                        <option value='pending'" . ($row['status'] == 'pending' ? ' selected' : '') . ">Pending</option>
-                                        <option value='finished'" . ($row['status'] == 'finished' ? ' selected' : '') . ">Finished</option>
-                                    </select>
-                                    <button onclick='saveStatus(this, " . $row['booking_id'] . ")'>Save</button>
-                                </td>";
-                                echo "<td><button onclick='deleteReservation(" . $row['booking_id'] . ")'>Delete</button></td>";
-                                echo "</tr>";
-                            }
-                        } catch (Exception $e) {
-                            echo "Error: " . $e->getMessage();
-                        }
-                        ?>
-                    </tbody>
-                </table>
-            </div>
-            <div class="container" id="pending-section" class="section active">
-                <h1>Pending Reservations</h1>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Location</</th>
-                            <th>Event Title</th>
-                            <th>Package</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="pending-reservations">
-                        <?php
-                        try {
-                            $query = $pdo->query("SELECT	
-                            bookings.booking_id,
-                            users.user_id,
-                            services.service_id,
-                            bookings.date,
-                            bookings.time,
-                            bookings.location,
-                            bookings.event_title,
-                            bookings.status,
-                            users.first_name,
-                            users.last_name,
-                            users.username,
-                            users.email,
-                            users.p_num
-                            FROM 
-                            bookings
-                        
-                        INNER JOIN users on bookings.user_id = users.user_id
-                        INNER JOIN services on bookings.service_id = services.service_id WHERE status = 'pending'");
-                            while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-                                echo "<tr>";
-                                echo "<td>" . htmlspecialchars($row['username']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['first_name']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['last_name']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['email']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['p_num']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['date']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['time']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['location']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['event_title']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['service_id']) . "</td>";
-                                echo "<td>
-                                    <select class='status-dropdown' onchange='updateStatus(this, " . $row['booking_id'] . ")'>
-                                        <option value='approved'" . ($row['status'] == 'approved' ? ' selected' : '') . ">Approved</option>
-                                        <option value='pending'" . ($row['status'] == 'pending' ? ' selected' : '') . ">Pending</option>
-                                        <option value='finished'" . ($row['status'] == 'finished' ? ' selected' : '') . ">Finished</option>
-                                    </select>
-                                    <button onclick='saveStatus(this, " . $row['booking_id'] . ")'>Save</button>
-                                </td>";
-                                echo "<td><button onclick='deleteReservation(" . $row['booking_id'] . ")'>Delete</button></td>";
-                                echo "</tr>";
-                            }
-                        } catch (Exception $e) {
-                            echo "Error: " . $e->getMessage();
-                        }
-                        ?>
-                    </tbody>
-                </table>
-            </div>
-            <div class="container" id="finished-section" class="section">
-                <h1>Finished Reservations</h1>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Location</th>
-                            <th>Event Title</th>
-                            <th>Package</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="finished-reservations">
-                        <?php
-                        try {
-                            $query = $pdo->query("SELECT	
-                            bookings.booking_id,
-                            users.user_id,
-                            services.service_id,
-                            bookings.date,
-                            bookings.time,
-                            bookings.location,
-                            bookings.event_title,
-                            bookings.status,
-                            users.first_name,
-                            users.last_name,
-                            users.username,
-                            users.email,
-                            users.p_num
-                            FROM 
-                            bookings
-                        
-                        INNER JOIN users on bookings.user_id = users.user_id
-                        INNER JOIN services on bookings.service_id = services.service_id WHERE status = 'finished'");
-                            while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-                                echo "<tr>";
-                                echo "<td>" . htmlspecialchars($row['username']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['first_name']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['last_name']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['email']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['p_num']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['date']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['time']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['location']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['event_title']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['service_id']) . "</td>";
-                                echo "<td>
-                                    <select class='status-dropdown' onchange='updateStatus(this, " . $row['booking_id'] . ")'>
-                                        <option value='approved'" . ($row['status'] == 'approved' ? ' selected' : '') . ">Approved</option>
-                                        <option value='pending'" . ($row['status'] == 'pending' ? ' selected' : '') . ">Pending</option>
-                                        <option value='finished'" . ($row['status'] == 'finished' ? ' selected' : '') . ">Finished</option>
-                                    </select>
-                                    <button onclick='saveStatus(this, " . $row['booking_id'] . ")'>Save</button>
-                                </td>";
-                                echo "<td><button onclick='deleteReservation(" . $row['booking_id'] . ")'>Delete</button></td>";
-                                echo "</tr>";
-                            }
-                        } catch (Exception $e) {
-                            echo "Error: " . $e->getMessage();
-                        }
-                        ?>
-                    </tbody>
-                </table>
+    </div>
+    <!-- ========================= Main ==================== -->
+    <div class="main">
+        <div class="topbar">
+            <div class="toggle">
+                <ion-icon name="menu-outline"></ion-icon>
             </div>
         </div>
+        <div class="container" id="approved-section" class="section">
+            <h1>Approved Reservations</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Location</th>
+                        <th>Event Title</th>
+                        <th>Package</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="approved-reservations">
+                    <?php
+                    include("classes/database.php");
+                    try {
+                        $query = $pdo->query("SELECT	
+                        bookings.booking_id,
+                        users.user_id,
+                        services.service_id,
+                        bookings.date,
+                        bookings.time,
+                        bookings.location,
+                        bookings.event_title,
+                        bookings.status,
+                        users.first_name,
+                        users.last_name,
+                        users.username,
+                        users.email,
+                        users.p_num
+                        FROM 
+                        bookings
+                    
+                    INNER JOIN users on bookings.user_id = users.user_id
+                    INNER JOIN services on bookings.service_id = services.service_id WHERE status = 'approved'");
+                        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($row['username']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['first_name']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['last_name']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['email']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['p_num']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['date']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['time']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['location']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['event_title']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['service_id']) . "</td>";
+                            echo "<td>
+                                <select class='status-dropdown' onchange='updateStatus(this, " . $row['booking_id'] . ")'>
+                                    <option value='approved'" . ($row['status'] == 'approved' ? ' selected' : '') . ">Approved</option>
+                                    <option value='pending'" . ($row['status'] == 'pending' ? ' selected' : '') . ">Pending</option>
+                                    <option value='finished'" . ($row['status'] == 'finished' ? ' selected' : '') . ">Finished</option>
+                                </select>
+                                <button onclick='saveStatus(this, " . $row['booking_id'] . ")'>Save</button>
+                            </td>";
+                            echo "<td><button onclick='deleteReservation(" . $row['booking_id'] . ")'>Delete</button></td>";
+                            echo "</tr>";
+                        }
+                    } catch (Exception $e) {
+                        echo "Error: " . $e->getMessage();
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="container" id="pending-section" class="section active">
+            <h1>Pending Reservations</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Location</th>
+                        <th>Event Title</th>
+                        <th>Package</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="pending-reservations">
+                    <?php
+                    try {
+                        $query = $pdo->query("SELECT	
+                        bookings.booking_id,
+                        users.user_id,
+                        services.service_id,
+                        bookings.date,
+                        bookings.time,
+                        bookings.location,
+                        bookings.event_title,
+                        bookings.status,
+                        users.first_name,
+                        users.last_name,
+                        users.username,
+                        users.email,
+                        users.p_num
+                        FROM 
+                        bookings
+                    
+                    INNER JOIN users on bookings.user_id = users.user_id
+                    INNER JOIN services on bookings.service_id = services.service_id WHERE status = 'pending'");
+                        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($row['username']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['first_name']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['last_name']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['email']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['p_num']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['date']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['time']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['location']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['event_title']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['service_id']) . "</td>";
+                            echo "<td>
+                                <select class='status-dropdown' onchange='updateStatus(this, " . $row['booking_id'] . ")'>
+                                    <option value='approved'" . ($row['status'] == 'approved' ? ' selected' : '') . ">Approved</option>
+                                    <option value='pending'" . ($row['status'] == 'pending' ? ' selected' : '') . ">Pending</option>
+                                    <option value='finished'" . ($row['status'] == 'finished' ? ' selected' : '') . ">Finished</option>
+                                </select>
+                                <button onclick='saveStatus(this, " . $row['booking_id'] . ")'>Save</button>
+                            </td>";
+                            echo "<td><button onclick='deleteReservation(" . $row['booking_id'] . ")'>Delete</button></td>";
+                            echo "</tr>";
+                        }
+                    } catch (Exception $e) {
+                        echo "Error: " . $e->getMessage();
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="container" id="finished-section" class="section">
+            <h1>Finished Reservations</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Location</th>
+                        <th>Event Title</th>
+                        <th>Package</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="finished-reservations">
+                    <?php
+                    try {
+                        $query = $pdo->query("SELECT	
+                        bookings.booking_id,
+                        users.user_id,
+                        services.service_id,
+                        bookings.date,
+                        bookings.time,
+                        bookings.location,
+                        bookings.event_title,
+                        bookings.status,
+                        users.first_name,
+                        users.last_name,
+                        users.username,
+                        users.email,
+                        users.p_num
+                        FROM 
+                        bookings
+                    
+                    INNER JOIN users on bookings.user_id = users.user_id
+                    INNER JOIN services on bookings.service_id = services.service_id WHERE status = 'finished'");
+                        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($row['username']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['first_name']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['last_name']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['email']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['p_num']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['date']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['time']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['location']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['event_title']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['service_id']) . "</td>";
+                            echo "<td>
+                                <select class='status-dropdown' onchange='updateStatus(this, " . $row['booking_id'] . ")'>
+                                    <option value='approved'" . ($row['status'] == 'approved' ? ' selected' : '') . ">Approved</option>
+                                    <option value='pending'" . ($row['status'] == 'pending' ? ' selected' : '') . ">Pending</option>
+                                    <option value='finished'" . ($row['status'] == 'finished' ? ' selected' : '') . ">Finished</option>
+                                </select>
+                                <button onclick='saveStatus(this, " . $row['booking_id'] . ")'>Save</button>
+                            </td>";
+                            echo "<td><button onclick='deleteReservation(" . $row['booking_id'] . ")'>Delete</button></td>";
+                            echo "</tr>";
+                        }
+                    } catch (Exception $e) {
+                        echo "Error: " . $e->getMessage();
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
     </div>
+</div>
 
 <!-- ====== ionicons ======= -->
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-
+    <script src="assets/js/main.js"></script>
 <script>
+
     function updateStatus(selectElement, reservationId) {
         var status = selectElement.value;
         var xhr = new XMLHttpRequest();
@@ -362,3 +361,4 @@
 </script>
 </body>
 </html>
+

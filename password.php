@@ -13,14 +13,14 @@ if (isset($_POST["changepass"])) {
 
     // Check if new password matches the confirm password
     if ($newPassword != $confirmPassword) {
-        echo "New password and confirm password do not match.";
+        echo "<script type='text/javascript'>alert('New password and confirm password do not match.');</script>";
         exit;
     }
 
     // Retrieve the user's data from the database
     $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
     if ($stmt === false) {
-        die("ERROR: Could not prepare query.");
+        die("<script type='text/javascript'>alert('ERROR: Could not prepare query.');</script>");
     }
 
     $stmt->execute([$username]);
@@ -35,21 +35,19 @@ if (isset($_POST["changepass"])) {
             // Update the password in the database
             $updateStmt = $pdo->prepare("UPDATE users SET password = ? WHERE username = ?");
             if ($updateStmt === false) {
-                die("ERROR: Could not prepare update query.");
+                die("<script type='text/javascript'>alert('ERROR: Could not prepare update query.');</script>");
             }
 
             if ($updateStmt->execute([$newPasswordHash, $username])) {
-                echo "Password updated successfully.";
-                echo "<script type='text/javascript'>alert('Success');</script>";
+                echo "<script type='text/javascript'>alert('Password updated successfully.');</script>";
             } else {
-                echo "Error updating password: " . $pdo->errorInfo()[2];
-                echo "<script type='text/javascript'>alert('Error');</script>";
+                echo "<script type='text/javascript'>alert('Error updating password: " . $pdo->errorInfo()[2] . "');</script>";
             }
         } else {
-            echo "Incorrect current password.";
+            echo "<script type='text/javascript'>alert('Incorrect current password.');</script>";
         }
     } else {
-        echo "User not found.";
+        echo "<script type='text/javascript'>alert('User not found.');</script>";
     }
 }
 
@@ -102,7 +100,7 @@ if (isset($_POST["addnewadmin"])) {
                     </a>
                 </li>
                 <li>
-                    <a href="index.php">
+                    <a href="admin.php">
                         <span class="icon">
                             <ion-icon name="home"></ion-icon>
                         </span>
