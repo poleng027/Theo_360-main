@@ -79,6 +79,7 @@
             <button id="next-month">Next</button>
         </div>
         <div id="calendar" class="calendar"></div>
+        <p>Note: If marked as red, it means the date is not available. Thank you!</p>
     </div>
 
     <script>

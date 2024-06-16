@@ -12,16 +12,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = $query->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
-        echo "User found: ";
-        print_r($user); 
         if (password_verify($password, $user['password'])) {
             // Store user info in session
             $_SESSION['username'] = $username;
             $_SESSION['role'] = $user['role']; 
-
-            // Debugging: Print session variables
-            echo "Session Variables: ";
-            print_r($_SESSION);
 
             // Redirect based on user role
             if ($user['role'] == 'admin') {
@@ -32,14 +26,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 exit();
             }
         } else {
-            echo "Invalid password!";
+            $errorMessage = "Invalid password!";
         }
     } else {
-        echo "User not found!";
+        $errorMessage = "User not found!";
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -63,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .login-container {
-            background-color: rgba(41, 34, 48, 0.9); 
+            background-color: rgba(58, 29, 97, 0.9); 
             padding: 40px 30px;
             border-radius: 15px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
@@ -130,12 +123,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .signup-link:hover {
             text-decoration: underline;
         }
+
+        .error {
+            background-color: #f44336;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .error a {
+            color: white;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
         <h1>Login</h1>
         <form method="post">
+            <?php if (isset($errorMessage)): ?>
+                <div class="error"><?= $errorMessage ?></div>
+            <?php endif; ?>
             <div class="input-container">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required>
