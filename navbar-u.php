@@ -9,7 +9,6 @@
 </head>
 <!-- ==========Style========== -->
 <style>
-
 .navbar {
     width: 100%;
     background-color: rgba(58, 29, 97, 0.9); 
@@ -105,7 +104,6 @@
 #nav .open a {
     background-color: #7a0dde;
 }
-
 </style>
 <body>
     <div class="navbar">
@@ -121,8 +119,7 @@
           </li>  
           <li><a href="contact-u.php"><i class="fa fa-envelope"></i> Messages</a></li> 
           <li><a href="feedback-u.php"><i class="fa fa-star"></i> Feedback</a></li> 
-          <li><a href="index.php"><i class="fa fa-sign-out"></i> Log Out</a></li>
-
+          <li><a href="logout.php"><i class="fa fa-sign-out"></i> Log Out</a></li>
         </ul>
     </div>
 </body>

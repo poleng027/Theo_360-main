@@ -11,24 +11,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $query->execute(['username' => $username]);
     $user = $query->fetch(PDO::FETCH_ASSOC);
 
-    if ($user && password_verify($password, $user['password'])) {
-        // Store user info in session
-        $_SESSION['username'] = $username;
-        $_SESSION['role'] = $user['role']; // Assuming you have a 'role' column in your users table
+    if ($user) {
+        echo "User found: ";
+        print_r($user); 
+        if (password_verify($password, $user['password'])) {
+            // Store user info in session
+            $_SESSION['username'] = $username;
+            $_SESSION['role'] = $user['role']; 
 
-        // Redirect based on user role
-        if ($user['role'] == 'admin') {
-            header("Location: admin.php");
-            //header('location:password.php');
+            // Debugging: Print session variables
+            echo "Session Variables: ";
+            print_r($_SESSION);
+
+            // Redirect based on user role
+            if ($user['role'] == 'admin') {
+                header("Location: admin.php");
+                exit();
+            } else {
+                header("Location: landing-page-u.php");
+                exit();
+            }
         } else {
-            header("Location: landing-page-u.php");
+            echo "Invalid password!";
         }
-        exit();
     } else {
-        echo "Invalid username or password!";
+        echo "User not found!";
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -40,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         /* Style similar to the signup page */
         body {
             font-family: Arial, sans-serif;
-            background-image: url('./assets/imgs/background.png'); /* Replace with your background image */
+            background-image: url('./assets/imgs/background.png');
             background-size: cover;
             background-position: center;
             display: flex;
@@ -52,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .login-container {
-            background-color: rgba(41, 34, 48, 0.9); /* Semi-transparent dark purple */
+            background-color: rgba(41, 34, 48, 0.9); 
             padding: 40px 30px;
             border-radius: 15px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
@@ -109,11 +120,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .signup-link {
-            /* display: block; */
+            display: block;
             margin-top: 20px;
             color: #ccc;
             text-decoration: none;
-            font-size: 17px;
+            font-size: 14px;
         }
 
         .signup-link:hover {
@@ -134,7 +145,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="password" id="password" name="password" required>
             </div>
             <button type="submit">Login</button>
-            <p>Don't have an Account?<a href="signup.php" class="signup-link"> Sign Up</a></p>
+            <p>Don't have an account? <a href="signup.php" class="signup-link">Sign up</a></p>
         </form>
     </div>
 </body>

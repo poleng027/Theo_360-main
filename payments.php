@@ -1,5 +1,13 @@
 <?php
 include 'classes/database.php'; // Database connection file
+session_start();
+
+// Check if the user is logged in
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
+    header("Location: index.php");
+    exit();
+}
+
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -119,90 +127,12 @@ try {
             color: #fff;
             margin-top: 20px;
         }
+        
     </style>
 </head>
 <body>
-    <!-- =============== Navigation ================ -->
-    <div class="container">
-        <div class="navigation">
-            <ul>
-                <li>
-                    <a href="#">
-                        <span class="icon">
-                            <ion-icon name="videocam"></ion-icon>
-                        </span>
-                        <span class="title">Theo 360</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="admin.php">
-                        <span class="icon">
-                            <ion-icon name="home"></ion-icon>
-                        </span>
-                        <span class="title">Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="reservation.php">
-                        <span class="icon">
-                            <ion-icon name="calendar"></ion-icon>
-                        </span>
-                        <span class="title">Reservation</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="service.php">
-                        <span class="icon">
-                            <ion-icon name="card"></ion-icon>
-                        </span>
-                        <span class="title">Services</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="payments.php">
-                        <span class="icon">
-                            <ion-icon name="mail"></ion-icon>
-                        </span>
-                        <span class="title">Payments</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="password.php">
-                        <span class="icon">
-                            <ion-icon name="key"></ion-icon>
-                        </span>
-                        <span class="title">Password</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="index.php">
-                        <span class="icon">
-                            <ion-icon name="log-out-outline"></ion-icon>
-                        </span>
-                        <span class="title">Sign Out</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- ========================= Main ==================== -->
-        <div class="main">
-            <div class="topbar">
-                <div class="toggle">
-                    <ion-icon name="menu-outline"></ion-icon>
-                </div>
-
-                <div class="search">
-                    <label>
-                        <input type="text" placeholder="Search here">
-                        <ion-icon name="search-outline"></ion-icon>
-                    </label>
-                </div>
-
-                <div class="user">
-                    <img src="assets/imgs/customer01.jpg" alt="">
-                </div>
-            </div>
+    
+<?php include("sidebar.php");?>   
 
             <!-- =============== Main Content ================ -->
             <div class="main-content">

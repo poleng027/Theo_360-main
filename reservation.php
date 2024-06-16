@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+// Check if the user is logged in
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
+    header("Location: index.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,76 +32,8 @@
     </style>
 </head>
 <body>
-    <!-- =============== Navigation ================ -->
-    <div class="container">
-        <div class="navigation">
-            <ul>
-                <li>
-                    <a href="#">
-                        <span class="icon">
-                            <ion-icon name="videocam"></ion-icon>
-                        </span>
-                        <span class="title">Theo 360</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="admin.php">
-                        <span class="icon">
-                            <ion-icon name="home"></ion-icon>
-                        </span>
-                        <span class="title">Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="reservation.php">
-                        <span class="icon">
-                            <ion-icon name="calendar"></ion-icon>
-                        </span>
-                        <span class="title">Reservation</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="service.php">
-                        <span class="icon">
-                            <ion-icon name="card"></ion-icon>
-                        </span>
-                        <span class="title">Services</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="payments.php">
-                        <span class="icon">
-                            <ion-icon name="mail"></ion-icon>
-                        </span>
-                        <span class="title">Payments</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="password.php">
-                        <span class="icon">
-                            <ion-icon name="key"></ion-icon>
-                        </span>
-                        <span class="title">Password</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="index.php">
-                        <span class="icon">
-                            <ion-icon name="log-out-outline"></ion-icon>
-                        </span>
-                        <span class="title">Sign Out</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <!-- ========================= Main ==================== -->
-    <div class="main">
-        <div class="topbar">
-            <div class="toggle">
-                <ion-icon name="menu-outline"></ion-icon>
-            </div>
-        </div>
+<?php include("sidebar.php");?>   
+
         <div class="container" id="approved-section" class="section">
             <h1>Approved Reservations</h1>
             <table>
@@ -106,6 +47,7 @@
                         <th>Date</th>
                         <th>Time</th>
                         <th>Location</th>
+                        <th>Indoor/Outdoor</th>
                         <th>Event Title</th>
                         <th>Package</th>
                         <th>Status</th>
@@ -123,6 +65,7 @@
                         bookings.date,
                         bookings.time,
                         bookings.location,
+                        bookings.indoor_outdoor,
                         bookings.event_title,
                         bookings.status,
                         users.first_name,
@@ -145,6 +88,7 @@
                             echo "<td>" . htmlspecialchars($row['date']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['time']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['location']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['indoor_outdoor']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['event_title']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['service_id']) . "</td>";
                             echo "<td>
@@ -178,6 +122,7 @@
                         <th>Date</th>
                         <th>Time</th>
                         <th>Location</th>
+                        <th>Indoor/Outdoor</th>
                         <th>Event Title</th>
                         <th>Package</th>
                         <th>Status</th>
@@ -194,6 +139,7 @@
                         bookings.date,
                         bookings.time,
                         bookings.location,
+                        bookings.indoor_outdoor,
                         bookings.event_title,
                         bookings.status,
                         users.first_name,
@@ -216,6 +162,7 @@
                             echo "<td>" . htmlspecialchars($row['date']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['time']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['location']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['indoor_outdoor']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['event_title']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['service_id']) . "</td>";
                             echo "<td>
@@ -249,6 +196,7 @@
                         <th>Date</th>
                         <th>Time</th>
                         <th>Location</th>
+                        <th>Indoor/Outdoor</th>
                         <th>Event Title</th>
                         <th>Package</th>
                         <th>Status</th>
@@ -265,6 +213,7 @@
                         bookings.date,
                         bookings.time,
                         bookings.location,
+                        bookings.indoor_outdoor,
                         bookings.event_title,
                         bookings.status,
                         users.first_name,
@@ -287,6 +236,7 @@
                             echo "<td>" . htmlspecialchars($row['date']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['time']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['location']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['indoor_outdoor']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['event_title']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['service_id']) . "</td>";
                             echo "<td>

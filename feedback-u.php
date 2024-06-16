@@ -13,15 +13,18 @@
         }
 
         body {
-            background-color: #442063;
-            font-family: 'Montserrat', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
-            margin: 0;
-        }
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: url(./assets/imgs/bg.png);
+        background-size: cover;
+        background-position: center;
+    }
 
         .panel-container {
             background-color: #fff;
