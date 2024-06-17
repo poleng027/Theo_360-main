@@ -23,6 +23,7 @@ body{
     background-image: url('../imgs/bg.png');
     background-position: center;
     background-size: cover;
+    
 }
 .container{
     position: relative;

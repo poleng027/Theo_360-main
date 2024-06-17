@@ -10,7 +10,7 @@
 </head>
 <!-- ==========Style========== -->
 <style>
-                * {
+        * {
             box-sizing: border-box;
         }
 
@@ -21,108 +21,106 @@
             height: 100vh;
             background-size: cover;
             background-position: center;
-
             align-items: center;
             justify-content: center;
             font-family: Arial, sans-serif;
 
-            overflow: hidden;
         }
-.navbar {
-    width: 100%;
-    background-color: rgba(58, 29, 97, 0.9); 
-    position: fixed;
-    top: 0;
-    left: 0;
-    overflow: hidden;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-}
+            .navbar {
+                width: 100%;
+                background-color: rgba(58, 29, 97, 0.9); 
+                position: fixed;
+                top: 0;
+                left: 0;
+                overflow: hidden;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 20px;
+            }
 
-.navbar-dropdown {
-    padding: 15px;
-    background-color: rgba(42, 23, 67, 0.9);
-    color: white;
-    font-size: 1.2em;
-    text-transform: uppercase;
-    border-right: 1px solid #7a0dde;
-}
+            .navbar-dropdown {
+                padding: 15px;
+                background-color: rgba(42, 23, 67, 0.9);
+                color: white;
+                font-size: 1.2em;
+                text-transform: uppercase;
+                border-right: 1px solid #7a0dde;
+            }
 
-.navbar-dropdown a {
-    color: white;
-    text-decoration: none;
-}
+            .navbar-dropdown a {
+                color: white;
+                text-decoration: none;
+            }
 
-#nav {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-}
+            #nav {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: flex;
+            }
 
-#nav li {
-    display: flex;
-    align-items: center;
-}
+            #nav li {
+                display: flex;
+                align-items: center;
+            }
 
-#nav li:not(:last-child) {
-    margin-right: 10px;
-}
+            #nav li:not(:last-child) {
+                margin-right: 10px;
+            }
 
-#nav a {
-    display: block;
-    padding: 15px 20px;
-    color: white;
-    text-decoration: none;
-    font-size: 1.1em;
-    position: relative;
-    transition: background-color 0.3s ease;
-}
+            #nav a {
+                display: block;
+                padding: 15px 20px;
+                color: white;
+                text-decoration: none;
+                font-size: 1.1em;
+                position: relative;
+                transition: background-color 0.3s ease;
+            }
 
-#nav a .fa {
-    margin-right: 10px;
-}
+            #nav a .fa {
+                margin-right: 10px;
+            }
 
-#nav .has_sub ul {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: #5a0cae;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    padding: 0;
-    margin: 0;
-    list-style: none;
-}
+            #nav .has_sub ul {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                background-color: #5a0cae;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+                padding: 0;
+                margin: 0;
+                list-style: none;
+            }
 
-#nav .has_sub:hover ul {
-    display: block;
-}
+            #nav .has_sub:hover ul {
+                display: block;
+            }
 
-#nav .has_sub ul li {
-    width: 200px;
-}
+            #nav .has_sub ul li {
+                width: 200px;
+            }
 
-#nav .has_sub ul a {
-    padding-left: 30px;
-}
+            #nav .has_sub ul a {
+                padding-left: 30px;
+            }
 
-#nav a:hover {
-    background-color: #7a0dde;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-}
+            #nav a:hover {
+                background-color: #7a0dde;
+                box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            }
 
-#nav .pull-right {
-    float: right;
-}
+            #nav .pull-right {
+                float: right;
+            }
 
-#nav .open a {
-    background-color: #7a0dde;
-}
+            #nav .open a {
+                background-color: #7a0dde;
+            }
 </style>
 <body>
     <div class="navbar">

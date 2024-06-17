@@ -9,22 +9,19 @@
 </head>
 <!-- ==================== Style ==================== -->
 <style>
-    body {
+    body {         
+        background-image: url(./assets/imgs/bg.png); 
         margin: 0;
-        padding-top: 300px;/
-        font-family: Arial, sans-serif;
-        background: linear-gradient(45deg, #2c003e, #1a002d);
-        background-size: 400% 400%;
-        animation: gradientAnimation 15s ease infinite;
-        color: #ffffff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
+        padding: 0;
         height: 100vh;
-        background-image: url('./assets/imgs/bg.png');
         background-size: cover;
         background-position: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        font-family: Arial, sans-serif;
+        color: #fff;
     }
 
     @keyframes gradientAnimation {
@@ -45,7 +42,6 @@
         left: 0;
         width: 100%;
         height: 100%;
-        overflow: hidden;
         z-index: -1;
     }
 
@@ -62,6 +58,7 @@
         max-width: 1200px;
         text-align: center;
         padding: 20px;
+        margin-bottom: 40px;
     }
 
     header {
@@ -78,11 +75,12 @@
     .main-container {
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: bottom;
         gap: 20px;
         padding: 20px;
         max-width: 900px; /* Adjusted width */
         margin: 20px auto; /* Adjusted margin */
+        
     }
 
     .video-container {
@@ -118,42 +116,26 @@
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
 
-    ul {
+    .container ul {
         list-style-type: none;
         padding-left: 20px;
         text-align: left;
     }
 
-    ul li {
+    .container ul li {
         font-size: 1.2em;
         color: #ded5d5;
         margin-bottom: 10px;
         line-height: 1.5;
     }
 
-    ul li h2 {
+    .container ul li h2 {
         font-size: 20px;
         font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     }
 
-    ul li p {
+    .container ul li p {
         font-size: 15px;
-    }
-
-    .book-now {
-        margin-top: 20px;
-        padding: 10px 20px;
-        font-size: 1em;
-        color: white;
-        background-color: #6a0dad;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    .book-now:hover {
-        background-color: #7a0dde;
     }
 
     @keyframes fadeIn {
@@ -206,7 +188,7 @@
                 <source src="./assets/imgs/0130.mp4" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
-            </div>
+        </div>
         <div class="container">
             <h1>How Theo360 works?</h1>
             <ul>
@@ -234,12 +216,6 @@
             </ul>
         </div>
     </div>
-    <div class="video-background">
-        <video autoplay muted loop id="bg-video">
-            <source src="background-video.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-    </div>
     <div class="content">
         <header>
             <h1>CHECK OUR PREVIOUS EVENTS:</h1>
@@ -250,21 +226,18 @@
                     <source src="./assets/imgs/gallery1.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
-                <p>Video Title 1</p>
             </div>
             <div class="video-container-grid">
                 <video controls autoplay muted>
                     <source src="./assets/imgs/gallery2.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
-                <p>Video Title 2</p>
             </div>
             <div class="video-container-grid">
                 <video controls autoplay muted>
                     <source src="./assets/imgs/gallery3.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
-                <p>Video Title 3</p>
             </div>
         </div>
     </div>
