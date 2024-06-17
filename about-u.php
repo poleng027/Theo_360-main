@@ -12,7 +12,7 @@
     body {         
         background-image: url(./assets/imgs/bg.png); 
         margin: 0;
-        padding: 0;
+        padding: 100px;
         height: 100vh;
         background-size: cover;
         background-position: center;
@@ -77,7 +77,7 @@
         justify-content: center;
         align-items: bottom;
         gap: 20px;
-        padding: 20px;
+        padding-top: 500px;
         max-width: 900px; /* Adjusted width */
         margin: 20px auto; /* Adjusted margin */
         
