@@ -8,7 +8,6 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'user') {
     exit();
 }
 
-
 $username = $_SESSION['username'];
 
 // Ensure you have a valid database connection
@@ -38,43 +37,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $payment_method = $_POST['payment-method'];
     $requests = $_POST['requests'];
 
-    // Check if the date is already booked
-    $query = $pdo->prepare("SELECT COUNT(*) FROM bookings WHERE date = :date AND time = :time");
-    $query->execute(['date' => $date, 'time' => $time]);
-    $count = $query->fetchColumn();
-
-    if ($count > 0) {
-        $warning = "The selected date and time is already booked. Please choose another date or time.";
+    // Check if the selected date is in the past
+    if (strtotime($date) < strtotime('today')) {
+        $warning = "You can't book events for past dates. Please choose a future date.";
     } else {
-        // Insert booking
-        $query = $pdo->prepare("INSERT INTO bookings (user_id, service_id, date, time, location, indoor_outdoor, event_title, status) VALUES (:user_id, :service_id, :date, :time, :location, :indoor_outdoor, :event_title, 'pending')");
-        $query->execute([
-            'user_id' => $user_id,
-            'service_id' => $service_id,
-            'date' => $date,
-            'time' => $time,
-            'location' => $location,
-            'indoor_outdoor' => $indoor_outdoor,
-            'event_title' => $event_title
-        ]);
-        $booking_id = $pdo->lastInsertId();
+        // Check if the date is already booked
+        $query = $pdo->prepare("SELECT COUNT(*) FROM bookings WHERE date = :date AND time = :time");
+        $query->execute(['date' => $date, 'time' => $time]);
+        $count = $query->fetchColumn();
 
-        // Insert payment
-        $query = $pdo->prepare("INSERT INTO payments (booking_id, payment_method, payment_status) VALUES (:booking_id, :payment_method, 'pending')");
-        $query->execute([
-            'booking_id' => $booking_id,
-            'payment_method' => $payment_method
-        ]);
+        if ($count > 0) {
+            $warning = "The selected date and time is already booked. Please choose another date or time.";
+        } else {
+            // Insert booking
+            $query = $pdo->prepare("INSERT INTO bookings (user_id, service_id, date, time, location, indoor_outdoor, event_title, status) VALUES (:user_id, :service_id, :date, :time, :location, :indoor_outdoor, :event_title, 'pending')");
+            $query->execute([
+                'user_id' => $user_id,
+                'service_id' => $service_id,
+                'date' => $date,
+                'time' => $time,
+                'location' => $location,
+                'indoor_outdoor' => $indoor_outdoor,
+                'event_title' => $event_title
+            ]);
+            $booking_id = $pdo->lastInsertId();
 
-        // Insert request
-        if (!empty($requests)) {
-            $query = $pdo->prepare("INSERT INTO requests (booking_id, request_desc) VALUES (:booking_id, :request_desc)");
+            // Insert payment
+            $query = $pdo->prepare("INSERT INTO payments (booking_id, payment_method, payment_status) VALUES (:booking_id, :payment_method, 'pending')");
             $query->execute([
                 'booking_id' => $booking_id,
-                'request_desc' => $requests
+                'payment_method' => $payment_method
             ]);
+
+            // Insert request
+            if (!empty($requests)) {
+                $query = $pdo->prepare("INSERT INTO requests (booking_id, request_desc) VALUES (:booking_id, :request_desc)");
+                $query->execute([
+                    'booking_id' => $booking_id,
+                    'request_desc' => $requests
+                ]);
+            }
+            $success = "Booking submitted successfully!";
         }
-        $success = "Booking submitted successfully!";
     }
 }
 

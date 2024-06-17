@@ -5,7 +5,7 @@ if (isset($_POST['username'])) {
     $username = $_POST['username'];
     $con = new database();
 
-    $query = $con->opencon()->prepare("SELECT admin_name FROM user_admins WHERE admin_name = ?");
+    $query = $con->opencon()->prepare("SELECT username FROM users WHERE username = ?");
     $query->execute([$username]);
     $existingUser = $query->fetch();
 

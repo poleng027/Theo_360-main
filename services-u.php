@@ -13,9 +13,8 @@ include("classes/database.php");
     <style>
         body {
             margin: 0;
-            padding: 0;
+            padding: 100px;
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
             background-image: url('./assets/imgs/bg.png');
             background-size: cover;
             background-position: center;

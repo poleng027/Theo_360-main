@@ -6,7 +6,7 @@ session_start();
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
     header("Location: index.php");
     exit();
-
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['addPackage'])) {
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$serviceName, $serviceDesc, $servicePrice, $serviceId]);
     }
 }
-}
+
 
 // Fetch all services from the database
 $services = $pdo->query("SELECT * FROM services")->fetchAll(PDO::FETCH_ASSOC);

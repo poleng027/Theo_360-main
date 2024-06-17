@@ -10,6 +10,24 @@
 </head>
 <!-- ==========Style========== -->
 <style>
+                * {
+            box-sizing: border-box;
+        }
+
+
+            body {         
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-size: cover;
+            background-position: center;
+
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+
+            overflow: hidden;
+        }
 .navbar {
     width: 100%;
     background-color: rgba(58, 29, 97, 0.9); 

@@ -18,14 +18,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($count > 0) {
         $error = "Username already taken. Please choose another one.";
     } else {
-        // Encrypt the password
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        // Validate the password
+        if (preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/', $password)) {
+            // Encrypt the password
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        // Insert the new user into the database
-        $query = $pdo->prepare("INSERT INTO users (email, first_name, last_name, username, password, p_num) VALUES (:email, :first_name, :last_name, :username, :password, :p_num)");
-        $query->execute(['email' => $email, 'first_name' => $firstname, 'last_name' => $lastname, 'username' => $username, 'password' => $hashedPassword, 'p_num' => $phonenum]);
+            // Insert the new user into the database
+            $query = $pdo->prepare("INSERT INTO users (email, first_name, last_name, username, password, p_num) VALUES (:email, :first_name, :last_name, :username, :password, :p_num)");
+            $query->execute(['email' => $email, 'first_name' => $firstname, 'last_name' => $lastname, 'username' => $username, 'password' => $hashedPassword, 'p_num' => $phonenum]);
 
-        $success = "User registered successfully!";
+            $success = "User registered successfully!";
+        } else {
+            $error = "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, and a special character.";
+        }
     }
 }
 ?>
@@ -154,11 +159,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             <div class="input-container">
                 <label for="first_name">First Name:</label>
-                <input type="first_name" id="first_name" name="first_name" required>
+                <input type="text" id="first_name" name="first_name" required>
             </div>
             <div class="input-container">
                 <label for="last_name">Last Name:</label>
-                <input type="last_name" id="last_name" name="last_name" required>
+                <input type="text" id="last_name" name="last_name" required>
             </div>
             <div class="input-container">
                 <label for="username">Username:</label>
@@ -170,7 +175,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             <div class="input-container">
                 <label for="pnum">Phone Number:</label>
-                <input type="pnum" id="pnum" name="pnum" required>
+                <input type="text" id="pnum" name="pnum" required>
             </div>
             <button type="submit">Sign Up</button>
         </form>
