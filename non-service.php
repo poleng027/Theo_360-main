@@ -1,13 +1,9 @@
 <?php
-session_start();
+
 include("classes/database.php");
 
-// Check if the user is logged in
-if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'user') {
-    header("Location: index.php");
-    exit();
-}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -109,7 +105,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'user') {
     </style>
 </head>
 <body>
-    <?php include("navbar-u.php"); ?>
+    <?php include("non-user-navbar.php"); ?>
     <header>
         <h1>Our Services</h1>
     </header>

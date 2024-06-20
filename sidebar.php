@@ -61,7 +61,14 @@
                 </li>
 
                 <li>
-                    <a href="password.php">
+                <?php 
+                    // Check user role to determine the correct password link
+                    if ($_SESSION['role'] === 's-admin') {
+                        echo '<a href="sa-pass.php">';
+                    } else {
+                        echo '<a href="password.php">';
+                    }
+                    ?>
                         <span class="icon">
                             <ion-icon name="key"></ion-icon>
                         </span>

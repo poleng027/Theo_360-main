@@ -107,7 +107,7 @@ if (isset($_POST["changepass"])) {
             echo "<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function() { 
                 var notif = document.createElement('div');
                 notif.className = 'notification error';
-                notif.innerText = 'User not found.';
+                notif.innerText = 'Admin not found.';
                 document.body.appendChild(notif);
                 setTimeout(function() {
                     notif.style.display = 'none';
@@ -117,6 +117,71 @@ if (isset($_POST["changepass"])) {
     }
 }
 
+// Check if form is submitted for adding new admin
+if (isset($_POST["addnewadmin"])) {
+    $newadminusername = $_POST['newadminusername'];
+    $newadminpassword = $_POST['newadminpassword'];
+
+    // Check if the password meets the criteria
+    if (!validatePassword($newadminpassword)) {
+        echo "<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function() { 
+            var notif = document.createElement('div');
+            notif.className = 'notification error';
+            notif.innerText = 'Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, and a special character.';
+            document.body.appendChild(notif);
+            setTimeout(function() {
+                notif.style.display = 'none';
+            }, 5000);
+        });</script>";
+    } else {
+        // Check if the username already exists
+        $query = $pdo->prepare("SELECT COUNT(*) FROM users WHERE username = :username");
+        $query->execute([':username' => $newadminusername]);
+        $count = $query->fetchColumn();
+
+        if ($count > 0) {
+            $error = "Username already taken. Please choose another one.";
+            echo "<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function() { 
+                var notif = document.createElement('div');
+                notif.className = 'notification error';
+                notif.innerText = '$error';
+                document.body.appendChild(notif);
+                setTimeout(function() {
+                    notif.style.display = 'none';
+                }, 5000);
+            });</script>";
+        } else {
+            // Encrypt the password
+            $hashedPassword = password_hash($newadminpassword, PASSWORD_DEFAULT);
+
+            // Insert the new user into the database with role as admin
+            $query = $pdo->prepare("INSERT INTO users (username, password, role) VALUES (:username, :password, 'admin')");
+            if ($query->execute([':username' => $newadminusername, ':password' => $hashedPassword])) {
+                $success = "Admin registered successfully!";
+                echo "<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function() { 
+                    var notif = document.createElement('div');
+                    notif.className = 'notification success';
+                    notif.innerText = '$success';
+                    document.body.appendChild(notif);
+                    setTimeout(function() {
+                        notif.style.display = 'none';
+                    }, 5000);
+                });</script>";
+            } else {
+                $error = "Error registering admin: " . $pdo->errorInfo()[2];
+                echo "<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function() { 
+                    var notif = document.createElement('div');
+                    notif.className = 'notification error';
+                    notif.innerText = '$error';
+                    document.body.appendChild(notif);
+                    setTimeout(function() {
+                        notif.style.display = 'none';
+                    }, 5000);
+                });</script>";
+            }
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -196,14 +261,22 @@ if (isset($_POST["changepass"])) {
 
 <!-- =============== Main Content ================ -->
 <div class="main-content">
-    <h2>Account Management</h2>
+    <h2>Password Management</h2>
     <div class="change-password">
-        <h3>Change Access Code</h3>
+        <h3>Change Password</h3>
         <form method="post" action="">
-            <input type="password" placeholder="Current Access Code" name="currentPassword" required>
-            <input type="password" placeholder="New Access Code" name="newPassword" required>
-            <input type="password" placeholder="Confirm New Access Code" name="confirmPassword" required>
+            <input type="password" placeholder="Current Password" name="currentPassword" required>
+            <input type="password" placeholder="New Password" name="newPassword" required>
+            <input type="password" placeholder="Confirm New Password" name="confirmPassword" required>
             <button type="submit" name="changepass">Change Password</button>
+        </form>
+    </div>
+    <div class="add-admin">
+        <h3>Add New Admin</h3>
+        <form method="post" action="">
+            <input name="newadminusername" type="text" placeholder="Admin LogIn ID" required>
+            <input name="newadminpassword" type="password" placeholder="Admin Access Code" required>
+            <button name="addnewadmin" type="submit">Add Admin</button>
         </form>
     </div>
 </div>

@@ -2,22 +2,31 @@
 session_start();
 
 // Check if the user is logged in
-if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
-    header("Location: index.php");
+if (!isset($_SESSION['username'])) {
+    header("Location: index.php"); // Redirect to login page if not logged in
+    exit();
+}
+
+// Check if the user is an admin or s-admin
+if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 's-admin') {
+    header("Location: denied.php"); // Redirect to denied.php if not admin or s-admin
     exit();
 }
 
 require_once 'classes/database.php';
 
-// Fetch bookings data
+// Initialize variables for bookings
 $pending = $approved = $finished = 0;
+
 try {
+    // Fetch bookings data
     $stmt = $pdo->prepare("SELECT status, COUNT(*) as count FROM bookings GROUP BY status");
     $stmt->execute();
     $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    // Process fetched data
     foreach ($bookings as $booking) {
-        switch($booking['status']) {
+        switch ($booking['status']) {
             case 'pending':
                 $pending = $booking['count'];
                 break;

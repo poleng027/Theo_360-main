@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -124,23 +125,22 @@
 </style>
 <body>
     <div class="navbar">
-        <div class="navbar-dropdown"><a href="landing-page-u.php">Theo360</a></div>
+        <div class="navbar-dropdown"><a href="theo.php">Theo360</a></div>
 
         <!-- Navbar navigation -->
         <ul id="nav">
-            <!-- Main service with font awesome icon -->
-            <li><a href="about-u.php"><i class="fa fa-info-circle"></i> About Us</a></li>
-            <li><a href="sched.php"><i class="fa fa-calendar-check"></i> Schedule of Events</a></li>
-            <li class="has_sub">
-                <a href="services-u.php"><i class="fa fa-cogs"></i> Services <span class="pull-right"><i class="fa fa-chevron-right"></i></span></a>
-            </li>  
-            <li><a href="contact-u.php"><i class="fa fa-envelope"></i> Contact Us</a></li> 
-            <li><a href="feedback-u.php"><i class="fa fa-star"></i> Feedback</a></li> 
-            <li><a href="logout.php"><i class="fa fa-sign-out"></i> Log Out</a></li>
+          <!-- Main service with font awesome icon -->
+          <li class="open"><a href="non-about.php"><i class="fa fa-info-circle"></i> About Us</a></li>
+          <li class="has_sub">
+            <a href="non-service.php"><i class="fa fa-cogs"></i> Services <span class="pull-right"><i class="fa fa-chevron-right"></i></span></a>
+          </li>  
+          <li><a href="non-contact.php"><i class="fa fa-envelope"></i> Contact Us</a></li> 
+          <li><a href="non-feedback.php"><i class="fa fa-star"></i> Feedback</a></li> 
+          <li><a href="index.php"><i class="fa fa-sign-out"></i>Log In/ Sign Up</a></li>
         </ul>
     </div>
-
-    <script>
+</body>
+        <script>
         // JavaScript to handle active class on navbar
         document.addEventListener('DOMContentLoaded', function() {
             var navLinks = document.querySelectorAll('#nav a');
@@ -162,5 +162,5 @@
             });
         });
     </script>
-</body>
+
 </html>

@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['role'] = $user['role']; 
 
             // Redirect based on user role
-            if ($user['role'] == 'admin') {
+            if ($user['role'] == 'admin' || $user['role'] == 's-admin') {
                 header("Location: admin.php");
                 exit();
             } else {
@@ -33,6 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

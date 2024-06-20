@@ -3,8 +3,14 @@ include 'classes/database.php'; // Database connection file
 session_start();
 
 // Check if the user is logged in
-if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
-    header("Location: index.php");
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php"); // Redirect to login page if not logged in
+    exit();
+}
+
+// Check if the user is an admin or s-admin
+if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 's-admin') {
+    header("Location: denied.php"); // Redirect to denied.php if not admin or s-admin
     exit();
 }
 
