@@ -6,10 +6,11 @@
     <title>About Us - How Theo360 works?</title>
     <!-- Link to Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Link to your custom CSS -->
+
 </head>
-<!-- ==================== Style ==================== -->
 <style>
-    body {         
+        body {         
         background-image: url(./assets/imgs/bg.png); 
         margin: 0;
         padding: 100px;
@@ -177,18 +178,51 @@
         transform: scale(1.05);
         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
     }
-</style>
 
+</style>
 <body>
-    <?php include("non-user-navbar.php");?>   
-    <!-- ==================== Main ==================== -->
+    <?php include("non-user-navbar.php"); ?>
+
+    <!-- Main container -->
     <div class="main-container">
-        <div class="video-container">
-            <video autoplay muted loop>
-                <source src="./assets/imgs/0130.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-        </div>
+        <?php
+        // Database connection details
+        $host = '127.0.0.1';
+        $db = 'theo360';
+        $user = 'root';
+        $pass = '';
+
+        // Create connection
+        $conn = new mysqli($host, $user, $pass, $db);
+
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        // Fetch main video URL
+        $sql_main_video = "SELECT url FROM videos WHERE title = 'Main Video'";
+        $result_main_video = $conn->query($sql_main_video);
+
+        if ($result_main_video->num_rows > 0) {
+            $row_main_video = $result_main_video->fetch_assoc();
+            $main_video_url = $row_main_video['url'];
+
+            echo '<div class="video-container">';
+            echo '<video autoplay muted loop>';
+            echo '<source src="' . $main_video_url . '" type="video/mp4">';
+            echo 'Your browser does not support the video tag.';
+            echo '</video>';
+            echo '</div>';
+        } else {
+            echo "Main video not found";
+        }
+
+        // Fetch previous event videos
+        $sql_previous_events = "SELECT * FROM videos WHERE title LIKE 'Gallery%'";
+        $result_previous_events = $conn->query($sql_previous_events);
+
+        ?>
         <div class="container">
             <h1>How Theo360 works?</h1>
             <ul>
@@ -216,30 +250,32 @@
             </ul>
         </div>
     </div>
+
+    <!-- Previous events -->
     <div class="content">
         <header>
             <h1>CHECK OUR PREVIOUS EVENTS:</h1>
         </header>
         <div class="video-grid">
-            <div class="video-container-grid">
-                <video controls autoplay muted>
-                    <source src="./assets/imgs/gallery1.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-            <div class="video-container-grid">
-                <video controls autoplay muted>
-                    <source src="./assets/imgs/gallery2.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-            <div class="video-container-grid">
-                <video controls autoplay muted>
-                    <source src="./assets/imgs/gallery3.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
+            <?php
+            if ($result_previous_events->num_rows > 0) {
+                while($row_event = $result_previous_events->fetch_assoc()) {
+                    echo '<div class="video-container-grid">';
+                    echo '<video controls autoplay muted>';
+                    echo '<source src="' . $row_event["url"] . '" type="video/mp4">';
+                    echo 'Your browser does not support the video tag.';
+                    echo '</video>';
+                    echo '</div>';
+                }
+            } else {
+                echo "No previous events found";
+            }
+
+            // Close connection
+            $conn->close();
+            ?>
         </div>
     </div>
+
 </body>
 </html>

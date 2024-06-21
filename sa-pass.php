@@ -4,7 +4,7 @@ include('classes/database.php');
 
 // Check if the user is logged in
 if (!isset($_SESSION['username'])) {
-    header("Location: login.php"); // Redirect to login page if not logged in
+    header("Location: index.php"); // Redirect to login page if not logged in
     exit();
 }
 

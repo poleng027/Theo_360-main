@@ -38,7 +38,7 @@
                         <span class="icon">
                             <ion-icon name="calendar"></ion-icon>
                         </span>
-                        <span class="title">Reservation</span>
+                        <span class="title">Reservations</span>
                     </a>
                 </li>
 
@@ -57,6 +57,15 @@
                             <ion-icon name="mail"></ion-icon>
                         </span>
                         <span class="title">Payments</span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="v-display.php">
+                        <span class="icon">
+                        <ion-icon name="videocam"></ion-icon>
+                        </span>
+                        <span class="title">Videos</span>
                     </a>
                 </li>
 
