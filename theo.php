@@ -1,3 +1,34 @@
+<?php
+session_start();
+include("classes/database.php");
+
+// Database connection details
+$host = '127.0.0.1';
+$db = 'theo360';
+$user = 'root';
+$pass = '';
+
+// Create connection
+$conn = new mysqli($host, $user, $pass, $db);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Fetch main video URL
+$sql_main_video = "SELECT url FROM videos WHERE title = 'Landing Page'";
+$result_main_video = $conn->query($sql_main_video);
+
+if ($result_main_video->num_rows > 0) {
+    $row_main_video = $result_main_video->fetch_assoc();
+    $main_video_url = $row_main_video['url'];
+} else {
+    $main_video_url = '';
+}
+
+$conn->close();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +37,7 @@
     <title>Video and Text Layout</title>
 </head>
 <style>
+    <style>
             * {
             box-sizing: border-box;
         }
@@ -106,6 +138,7 @@
         }
 
 </style>
+</style>
 <body>
 <?php include("non-user-navbar.php");?>    
 
@@ -116,13 +149,16 @@
             Founded on the principle that every moment holds beauty and significance, Theo360 combines advanced technology with creative expertise to produce immersive, emotionally resonant videos tailored to each client's unique vision. Their client-centric approach emphasizes personalized service and strong relationships, ensuring satisfaction from initial consultation to final edit. Versatile and adaptable, Theo360 remains at the industry's forefront, creating impactful visual stories that inspire and connect people.
             </p>
             <a href="book-u.php"><button class="book-now-btn">Book Now</button></a>
-
         </div>
         <div class="video-section">
-            <video autoplay muted loop>
-                <source src="./assets/imgs/0047.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
+            <?php if ($main_video_url): ?>
+                <video autoplay muted loop>
+                    <source src="<?php echo $main_video_url; ?>" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            <?php else: ?>
+                <p>Main video not found.</p>
+            <?php endif; ?>
         </div>
     </div>
 </body>

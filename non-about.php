@@ -78,7 +78,7 @@
         justify-content: center;
         align-items: bottom;
         gap: 20px;
-        padding-top: 500px;
+        padding-top: 1050px;
         max-width: 900px; /* Adjusted width */
         margin: 20px auto; /* Adjusted margin */
         

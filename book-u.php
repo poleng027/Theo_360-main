@@ -77,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     'request_desc' => $requests
                 ]);
             }
-            $success = "Booking submitted successfully!";
+            $success = "Booking submitted successfully. Expect a call or an email for confirmation! Thank You!";
         }
     }
 }
@@ -134,7 +134,7 @@ $services = $pdo->query("SELECT * FROM services")->fetchAll(PDO::FETCH_ASSOC);
     }
     button {
         padding: 10px;
-        background-color: #4CAF50;
+        background-color: rgba(58, 29, 97, 0.9);
         color: white;
         border: none;
         border-radius: 4px;
@@ -142,7 +142,7 @@ $services = $pdo->query("SELECT * FROM services")->fetchAll(PDO::FETCH_ASSOC);
         font-size: 1em;
     }
     button:hover {
-        background-color: #45a049;
+        background-color: #a52997;
     }
     .message {
         margin-bottom: 20px;
