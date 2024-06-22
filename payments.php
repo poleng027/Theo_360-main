@@ -183,7 +183,8 @@ try {
                     </tbody>
                 </table>
 
-                <h2>Finished Payments</h2>
+                <h2>Finished Payments</h2> 
+                <button class="btn btn-danger" onclick="exportToExcel()">Export to Excel</button>
                 <table>
                     <thead>
                         <tr>
@@ -235,5 +236,31 @@ try {
     <!-- ====== ionicons ======= -->
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+    function exportToExcel() {
+      fetch('export_payment.php')
+        .then(response => {
+          if (response.ok) return response.blob();
+          throw new Error('Network response was not ok.');
+        })
+        .then(blob => {
+          // Create a new URL for the blob
+          const url = window.URL.createObjectURL(blob);
+          // Create a new <a> element for the download
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'payment.csv'; // Specify the file name for download
+          document.body.appendChild(a); // Append <a> to <body>
+          a.click(); // Simulate click on <a> to start download
+          window.URL.revokeObjectURL(url); // Clean up URL object
+          a.remove(); // Remove <a> from <body>
+        })
+        .catch(error => {
+          console.error('There was an error:', error);
+        });
+    }
+</script>
 </body>
 </html>
