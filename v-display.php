@@ -120,11 +120,11 @@ $conn->close();
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
-            margin: 20px;
+
         }
 
         h2 {
-            color: #333;
+            color: white;
         }
 
         h3 {
@@ -162,7 +162,7 @@ $conn->close();
         }
 
         button {
-            background-color: #007bff;
+            background-color: #69185B;
             color: #fff;
             border: none;
             border-radius: 4px;
