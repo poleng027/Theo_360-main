@@ -91,10 +91,10 @@ if (isset($_POST['add'])) {
 if (isset($_GET['delete'])) {
     $id = sanitize_input($_GET['delete']);
 
-    $sql_delete = "DELETE FROM videos WHERE id='$id'";
+    $sql_delete = "DELETE FROM videos WHERE vid_id='$id'";
 
     if ($conn->query($sql_delete) === TRUE) {
-        echo "Video deleted successfully";
+
     } else {
         echo "Error deleting video: " . $conn->error;
     }

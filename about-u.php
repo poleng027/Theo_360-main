@@ -78,7 +78,7 @@
         justify-content: center;
         align-items: bottom;
         gap: 20px;
-        padding-top: 1050px;
+        padding-top: 800px;
         max-width: 900px; /* Adjusted width */
         margin: 20px auto; /* Adjusted margin */
         
@@ -181,7 +181,7 @@
 
 </style>
 <body>
-    <?php include("non-user-navbar.php"); ?>
+<?php include("navbar-u.php");?>  
 
     <!-- Main container -->
     <div class="main-container">

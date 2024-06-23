@@ -1,6 +1,8 @@
 <?php
 include("classes/database.php");
 
+$error = $success = '';
+
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
@@ -10,16 +12,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
     $phonenum = $_POST['pnum'];
 
-    // Check if the username already exists
-    $query = $pdo->prepare("SELECT COUNT(*) FROM users WHERE username = :username");
-    $query->execute(['username' => $username]);
-    $count = $query->fetchColumn();
-
-    if ($count > 0) {
-        $error = "Username already taken. Please choose another one.";
+    // Validate email format
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Invalid email format";
+    } elseif (strlen($firstname) < 2) {
+        $error = "First name must be at least 2 characters long";
+    } elseif (strlen($lastname) < 2) {
+        $error = "Last name must be at least 2 characters long";
+    } elseif (strlen($username) < 3) {
+        $error = "Username must be at least 3 characters long";
+    } elseif (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/', $password)) {
+        $error = "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, and a special character";
+    } elseif (!preg_match('/^\d{10}$/', $phonenum)) {
+        $error = "Invalid phone number";
     } else {
-        // Validate the password
-        if (preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/', $password)) {
+        // Check if the username already exists
+        $query = $pdo->prepare("SELECT COUNT(*) FROM users WHERE username = :username");
+        $query->execute(['username' => $username]);
+        $count = $query->fetchColumn();
+
+        if ($count > 0) {
+            $error = "Username already taken. Please choose another one.";
+        } else {
             // Encrypt the password
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
@@ -28,8 +42,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $query->execute(['email' => $email, 'first_name' => $firstname, 'last_name' => $lastname, 'username' => $username, 'password' => $hashedPassword, 'p_num' => $phonenum]);
 
             $success = "User registered successfully!";
-        } else {
-            $error = "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, and a special character.";
         }
     }
 }
@@ -146,11 +158,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="signup-container">
         <h1>Sign Up</h1>
-        <?php if (isset($error)): ?>
-            <div class="error"><?= $error ?></div>
+        <?php if (!empty($error)): ?>
+            <div class="error"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
-        <?php if (isset($success)): ?>
-            <div class="success"><?= $success ?></div>
+        <?php if (!empty($success)): ?>
+            <div class="success"><?= htmlspecialchars($success) ?></div>
         <?php endif; ?>
         <form method="post">
             <div class="input-container">

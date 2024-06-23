@@ -145,7 +145,7 @@ $conn->close();
 </style>
 </style>
 <body>
-<?php include("non-user-navbar.php");?>    
+<?php include("navbar-u.php");?>    
 
     <div class="container">
         <div class="text-section">

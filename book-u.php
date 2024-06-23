@@ -78,8 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     'payment_method' => $payment_method,
                     'payment_status' => $payment_status // Use fetched payment status here
                 ]);
-                
-                echo "Payment inserted successfully.";
+
             } catch (PDOException $e) {
                 echo "PDO Exception: " . $e->getMessage();
             }
@@ -108,7 +107,7 @@ $services = $pdo->query("SELECT * FROM services")->fetchAll(PDO::FETCH_ASSOC);
 <title>Book Now</title>
 <style>
     body {
-        margin: 0;
+        margin:0;
         padding: 150px;
         font-family: 'Arial', sans-serif;
         background-color: #b897b0;
@@ -126,6 +125,7 @@ $services = $pdo->query("SELECT * FROM services")->fetchAll(PDO::FETCH_ASSOC);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         max-width: 500px;
         width: 100%;
+        margin-top: 15%;
     }
     h1 {
         font-size: 2em;

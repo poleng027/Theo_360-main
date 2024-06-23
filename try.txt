@@ -1,55 +1,382 @@
+<?php
+// // Database configuration
+$host = '127.0.0.1';
+$db = 'theo360';
+$user = 'root';
+$pass = '';
 
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-function checkAccountuser($username, $password) {
-        // Open database connection
-        $con = $this->opencon();
-    
-        // Prepare the SQL query
-        $stmt = $con->prepare("SELECT * FROM customer WHERE username = ?");
-        $stmt->execute([$username]);
-    
-        // Fetch the user data as an associative array
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-        // If a user is found, verify the password
-        if ($user && password_verify($password, $user['admin_pass'])) {
-            return $user;
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $email = $_POST['email'];
+        $firstname = $_POST['first_name'];
+        $lastname = $_POST['last_name'];
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        $phonenum = $_POST['pnum'];
+
+        $pdo->beginTransaction();
+
+        // Check if the username already exists
+        $query = $pdo->prepare("SELECT COUNT(*) FROM users WHERE username = :username");
+        $query->bindParam(':username', $username);
+        $query->execute();
+        $count = $query->fetchColumn();
+
+        if ($count == 0) {
+            // Hash the password
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+            // Insert the new user into the database
+            $query = $pdo->prepare("INSERT INTO users (email, first_name, last_name, username, password, p_num) VALUES (:email, :first_name, :last_name, :username, :password, :p_num)");
+            $query->bindParam(':email', $email);
+            $query->bindParam(':first_name', $firstname);
+            $query->bindParam(':last_name', $lastname);
+            $query->bindParam(':username', $username);
+            $query->bindParam(':password', $hashedPassword);
+            $query->bindParam(':p_num', $phonenum);
+            $query->execute();
+
+            if ($query->rowCount() > 0) {
+                $pdo->commit();
+                $success = "User registered successfully!";
+            } else {
+                $pdo->rollBack();
+                $error = "Error in registration: unable to insert user data";
+            }
+        } else {
+            $pdo->rollBack();
+            $error = "Username already exists!";
         }
-    
-        // If no user is found or password is incorrect, return false
-        return false;
     }
-
-function checkAccountAdmin($username, $password) {
-    // Open database connection
-    $con = $this->opencon();
-    
-    // Prepare the SQL query
-    $stmt = $con->prepare("SELECT * FROM admin WHERE username = ?");
-    $stmt->execute([$username]);
-    
-    // Fetch the admin data as an associative array
-    $admin = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    // If an admin is found, verify the password
-    if ($admin && password_verify($password, $admin['password'])) {
-        return $admin;
-    }
-    
-    // If no admin is found or password is incorrect, return false
-    return false;
+} catch (PDOException $e) {
+    $pdo->rollBack();
+    $error = "Error in registration: " . $e->getMessage();
 }
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+        /* Your existing styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('./assets/imgs/bg.png'); 
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: white;
+        }
 
-database
+        .signup-container {
+            background-color: rgba(41, 34, 48, 0.9);
+            padding: 40px 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            width: 400px;
+            text-align: center;
+        }
 
+        .signup-container h1 {
+            margin-bottom: 30px;
+            color: white;
+        }
 
-if(isset($_POST['login])){
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+        .input-container {
+            margin-bottom: 20px;
+            text-align: left;
+            margin-right: 20px;
+        }
 
-    if 
+        .input-container label {
+            display: block;
+            margin-bottom: 8px;
+            color: white;
+            font-weight: bold;
+        }
 
+        .input-container input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
 
+        .input-container input::placeholder {
+            color: #ccc;
+        }
 
+        button {
+            width: 102%;
+            padding: 12px;
+            background-color: #6a0dad;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-}
+        button:hover {
+            background-color: #5a0ca0;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            width: 96%;
+            padding: 12px;
+            background-color: #ccc;
+            border: none;
+            border-radius: 10px;
+            color: black;
+            font-size: 18px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background-color: #bbb;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            color: green;
+            margin-bottom: 20px;
+        }
+
+        .is-invalid {
+            border-color: red;
+        }
+
+        .is-valid {
+            border-color: green;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="signup-container">
+        <h1>Sign Up</h1>
+        <div id="message">
+            <?php
+                if (isset($success)) {
+                    echo "<p class='success'>$success</p>";
+                } elseif (isset($error)) {
+                    echo "<p class='error'>$error</p>";
+                }
+            ?>
+        </div>
+        <form id="signup-form" method="POST" action="">
+            <div class="input-container">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <div id="email-status"></div>
+            </div>
+            <div class="input-container">
+                <label for="first_name">First Name:</label>
+                <input type="text" id="first_name" name="first_name" required>
+            </div>
+            <div class="input-container">
+                <label for="last_name">Last Name:</label>
+                <input type="text" id="last_name" name="last_name" required>
+            </div>
+            <div class="input-container">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <div id="username-status"></div>
+            </div>
+            <div class="input-container">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <div id="password-status"></div>
+            </div>
+            <div class="input-container">
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <div id="confirm-password-status"></div>
+            </div>
+            <div class="input-container">
+                <label for="pnum">Phone Number:</label>
+                <input type="text" id="pnum" name="pnum" required>
+                <div id="phone-status"></div>
+            </div>
+            <button type="submit" id="submitBtn">Sign Up</button>
+        </form>
+        <a href="index.php" class="back-button">Back to Login</a>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $('#submitBtn').prop('disabled', true);
+
+            // Function to validate individual input fields
+            function validateInput(input) {
+                switch (input.name) {
+                    case 'email':
+                        return validateEmail(input);
+                    case 'username':
+                        return validateUsername(input);
+                    case 'password':
+                        return validatePassword(input);
+                    case 'confirmPassword':
+                        return validateConfirmPassword(input);
+                    case 'pnum':
+                        return validatePhoneNumber(input);
+                    default:
+                        if (input.checkValidity()) {
+                            input.classList.remove("is-invalid");
+                            input.classList.add("is-valid");
+                            return true;
+                        } else {
+                            input.classList.remove("is-valid");
+                            input.classList.add("is-invalid");
+                            return false;
+                        }
+                }
+            }
+
+            // Function to validate email format
+            function validateEmail(emailInput) {
+                const email = emailInput.value;
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (regex.test(email)) {
+                    emailInput.classList.remove("is-invalid");
+                    emailInput.classList.add("is-valid");
+                    $('#email-status').text('').css('color', 'green');
+                    return true;
+                } else {
+                    emailInput.classList.remove("is-valid");
+                    emailInput.classList.add("is-invalid");
+                    $('#email-status').text('Invalid email format').css('color', 'red');
+                    return false;
+                }
+            }
+
+            // Function to validate username
+            function validateUsername(usernameInput) {
+                const username = usernameInput.value;
+                const usernameStatus = $('#username-status');
+
+                if (username.length > 0) {
+                    // Simulated asynchronous check (replace with actual logic)
+                    // This example assumes check is successful
+                    setTimeout(function() {
+                        usernameInput.classList.remove("is-invalid");
+                        usernameInput.classList.add("is-valid");
+                        usernameStatus.text('Username available').css('color', 'green');
+                    }, 1000); // Simulate delay
+                    return true;
+                } else {
+                    usernameInput.classList.remove("is-valid");
+                    usernameInput.classList.add("is-invalid");
+                    usernameStatus.text('').css('color', 'red');
+                    return false;
+                }
+            }
+
+            // Function to validate password strength
+            function validatePassword(passwordInput) {
+                const password = passwordInput.value;
+                const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+                if (regex.test(password)) {
+                    passwordInput.classList.remove("is-invalid");
+                    passwordInput.classList.add("is-valid");
+                    $('#password-status').text('Password is strong').css('color', 'green');
+                    return true;
+                } else {
+                    passwordInput.classList.remove("is-valid");
+                    passwordInput.classList.add("is-invalid");
+                    $('#password-status').text('Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.').css('color', 'red');
+                    return false;
+                }
+            }
+
+            // Function to validate password confirmation
+            function validateConfirmPassword(confirmPasswordInput) {
+                const passwordInput = document.querySelector("input[name='password']");
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+
+                if (password === confirmPassword && password !== '') {
+                    confirmPasswordInput.classList.remove("is-invalid");
+                    confirmPasswordInput.classList.add("is-valid");
+                    $('#confirm-password-status').text('Passwords match').css('color', 'green');
+                    return true;
+                } else {
+                    confirmPasswordInput.classList.remove("is-valid");
+                    confirmPasswordInput.classList.add("is-invalid");
+                    $('#confirm-password-status').text('Passwords do not match').css('color', 'red');
+                    return false;
+                }
+            }
+
+            // Function to validate phone number format
+            function validatePhoneNumber(phoneInput) {
+                const phoneNumber = phoneInput.value;
+                const regex = /^\d{11}$/;
+
+                if (regex.test(phoneNumber)) {
+                    phoneInput.classList.remove("is-invalid");
+                    phoneInput.classList.add("is-valid");
+                    $('#phone-status').text('Valid phone number').css('color', 'green');
+                    return true;
+                } else {
+                    phoneInput.classList.remove("is-valid");
+                    phoneInput.classList.add("is-invalid");
+                    $('#phone-status').text('Phone number must be 11 digits').css('color', 'red');
+                    return false;
+                }
+            }
+
+            // Check if the form is valid
+            function checkFormValidity() {
+                const inputs = $('#signup-form').find('input');
+                let isValid = true;
+                inputs.each(function() {
+                    if (!validateInput(this)) {
+                        isValid = false;
+                    }
+                });
+                return isValid;
+            }
+
+            // Real-time validation
+            $('#signup-form input').on('input', function() {
+                validateInput(this);
+                $('#submitBtn').prop('disabled', !checkFormValidity());
+            });
+
+            // Form submission
+            $('#signup-form').on('submit', function(event) {
+                event.preventDefault();
+                if (checkFormValidity()) {
+                    // Here you can handle the form data as needed, e.g., send it to a server or show a success message
+                    $('#message').html('<p class="success">Sign up successful!</p>');
+                } else {
+                    $('#message').html('<p class="error">Please fix the errors in the form.</p>');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
