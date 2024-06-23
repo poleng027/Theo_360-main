@@ -272,7 +272,7 @@ $conn->close();
                     echo "<td>" . $row['title'] . "</td>";
                     echo "<td>" . $row['url'] . "</td>";
                     echo "<td>";
-                    echo '<a href="?delete=' . $row['id'] . '" onclick="return confirm(\'Are you sure?\')">Delete</a>';
+                    echo '<a href="?delete=' . $row['vid_id'] . '" onclick="return confirm(\'Are you sure?\')">Delete</a>';
                     echo "</td>";
                     echo "</tr>";
                 }

@@ -62,12 +62,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ]);
             $booking_id = $pdo->lastInsertId();
 
-            // Insert payment
-            $query = $pdo->prepare("INSERT INTO payments (booking_id, payment_method, payment_status) VALUES (:booking_id, :payment_method, 'pending')");
-            $query->execute([
-                'booking_id' => $booking_id,
-                'payment_method' => $payment_method
-            ]);
+            try {
+                // Enable PDO error reporting
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                
+                // Fetch payment status from bookings table
+                $stmt = $pdo->prepare("SELECT status FROM bookings WHERE booking_id = :booking_id");
+                $stmt->execute(['booking_id' => $booking_id]);
+                $payment_status = $stmt->fetchColumn();
+                
+                // Insert payment
+                $query = $pdo->prepare("INSERT INTO payments (booking_id, payment_method, payment_status) VALUES (:booking_id, :payment_method, :payment_status)");
+                $query->execute([
+                    'booking_id' => $booking_id,
+                    'payment_method' => $payment_method,
+                    'payment_status' => $payment_status // Use fetched payment status here
+                ]);
+                
+                echo "Payment inserted successfully.";
+            } catch (PDOException $e) {
+                echo "PDO Exception: " . $e->getMessage();
+            }
+            
 
             // Insert request
             if (!empty($requests)) {

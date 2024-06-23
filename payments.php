@@ -15,67 +15,40 @@ if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 's-admin') {
 }
 
 
-// Handle form submissions
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['delete'])) {
-        $bookingId = $_POST['booking_id'];
-        $deleteQuery = "DELETE FROM bookings WHERE booking_id = :booking_id";
-        $stmt = $pdo->prepare($deleteQuery);
-        $stmt->execute(['booking_id' => $bookingId]);
-    }
-
-    if (isset($_POST['save'])) {
-        $bookingId = $_POST['booking_id'];
-        $status = $_POST['status'];
-        $updateBookingQuery = "UPDATE bookings SET status = :status WHERE booking_id = :booking_id";
-        $stmt = $pdo->prepare($updateBookingQuery);
-        $stmt->execute(['status' => $status, 'booking_id' => $bookingId]);
-
-        $paymentStatus = $status === 'finished' ? 'finished' : 'pending';
-        $updatePaymentQuery = "UPDATE payments SET payment_status = :payment_status WHERE booking_id = :booking_id";
-        $stmt = $pdo->prepare($updatePaymentQuery);
-        $stmt->execute(['payment_status' => $paymentStatus, 'booking_id' => $bookingId]);
-    }
-
-    // Redirect to avoid resubmission
-    header("Location: payments.php");
-    exit();
-}
-
 try {
-    // Fetch finished bookings
-    $finishedQuery = "
-        SELECT b.booking_id, u.first_name, u.last_name, s.service_name, p.payment_method, p.payment_status
-        FROM bookings b
-        JOIN users u ON b.user_id = u.user_id
-        JOIN services s ON b.service_id = s.service_id
-        JOIN payments p ON b.booking_id = p.booking_id
-        WHERE p.payment_status = 'finished'
-    ";
-    $finishedStmt = $pdo->prepare($finishedQuery);
-    $finishedStmt->execute();
-    $finishedBookings = $finishedStmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Fetch pending bookings
+    // Fetch pending payments from approved reservations
     $pendingQuery = "
         SELECT b.booking_id, u.first_name, u.last_name, s.service_name, p.payment_method, p.payment_status
         FROM bookings b
         JOIN users u ON b.user_id = u.user_id
         JOIN services s ON b.service_id = s.service_id
         JOIN payments p ON b.booking_id = p.booking_id
-        WHERE p.payment_status = 'pending'
-    ";
+        WHERE p.payment_status = 'approved' AND b.status = 'approved'
+        ORDER BY b.booking_id"; // Ensure proper ordering
     $pendingStmt = $pdo->prepare($pendingQuery);
     $pendingStmt->execute();
     $pendingBookings = $pendingStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Fetch total payment for finished bookings
+    // Fetch finished payments from finished reservations
+    $finishedQuery = "
+        SELECT b.booking_id, u.first_name, u.last_name, s.service_name, p.payment_method, p.payment_status
+        FROM bookings b
+        JOIN users u ON b.user_id = u.user_id
+        JOIN services s ON b.service_id = s.service_id
+        JOIN payments p ON b.booking_id = p.booking_id
+        WHERE p.payment_status = 'finished' AND b.status = 'finished'
+        ORDER BY b.booking_id"; // Ensure proper ordering
+    $finishedStmt = $pdo->prepare($finishedQuery);
+    $finishedStmt->execute();
+    $finishedBookings = $finishedStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Calculate total payment for finished bookings
     $totalFinishedQuery = "
         SELECT SUM(s.service_price) AS total_payment 
         FROM bookings b
         JOIN services s ON b.service_id = s.service_id
         JOIN payments p ON b.booking_id = p.booking_id
-        WHERE p.payment_status = 'finished'
+        WHERE p.payment_status = 'finished' AND b.status = 'finished'
     ";
     $totalFinishedStmt = $pdo->prepare($totalFinishedQuery);
     $totalFinishedStmt->execute();
@@ -85,8 +58,25 @@ try {
 } catch (PDOException $e) {
     // Handle any PDO exceptions here
     echo "Error: " . $e->getMessage();
-    die();
 }
+try {
+    // Enable PDO error reporting
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    // Update payment_status based on bookings table status (pending or approved)
+    $update_query = $pdo->prepare("
+        UPDATE payments p
+        JOIN bookings b ON p.booking_id = b.booking_id
+        SET p.payment_status = b.status
+        WHERE b.status IN ('pending', 'approved', 'finished')
+    ");
+    
+    $update_query->execute();
+    
+} catch (PDOException $e) {
+    echo "PDO Exception: " . $e->getMessage();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -140,94 +130,66 @@ try {
     
 <?php include("sidebar.php");?>   
 
-            <!-- =============== Main Content ================ -->
-            <div class="main-content">
-                <h2>Pending Payments</h2>
-                <table>
-                    <thead>
+    <!-- =============== Main Content ================ -->
+    <div class="main-content">
+        <h2>Pending Payments</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Pending Payment</th>
+                    <th>Payment Method</th>
+                    <th>Payment Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($pendingBookings)) : ?>
+                    <?php foreach ($pendingBookings as $booking): ?>
                         <tr>
-                            <th>Name</th>
-                            <th>Pending Payment</th>
-                            <th>Payment Method</th>
-                            <th>Actions</th>
+                            <td><?php echo htmlspecialchars($booking['first_name'] . ' ' . $booking['last_name']); ?></td>
+                            <td><?php echo htmlspecialchars($booking['service_name']); ?></td>
+                            <td><?php echo htmlspecialchars($booking['payment_method']); ?></td>
+                            <td><?php echo htmlspecialchars($booking['payment_status']); ?></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (!empty($pendingBookings)) : ?>
-                            <?php foreach ($pendingBookings as $booking): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($booking['first_name'] . ' ' . $booking['last_name']); ?></td>
-                                    <td><?php echo htmlspecialchars($booking['service_name']); ?></td>
-                                    <td><?php echo htmlspecialchars($booking['payment_method']); ?></td>
-                                    <td>
-                                        <form method="post" action="payments.php" style="display:inline;">
-                                            <input type="hidden" name="booking_id" value="<?php echo htmlspecialchars($booking['booking_id']); ?>">
-                                            <select name="status">
-                                                <option value="pending" <?php echo $booking['payment_status'] === 'pending' ? 'selected' : ''; ?>>Pending</option>
-                                                <option value="finished" <?php echo $booking['payment_status'] === 'finished' ? 'selected' : ''; ?>>Finished</option>
-                                            </select>
-                                            <button type="submit" name="save">Save</button>
-                                        </form>
-                                        <form method="post" action="payments.php" style="display:inline;">
-                                            <input type="hidden" name="booking_id" value="<?php echo htmlspecialchars($booking['booking_id']); ?>">
-                                            <button type="submit" name="delete">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="4">No pending payments found.</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="4">No pending payments found.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
 
-                <h2>Finished Payments</h2> 
-                <button class="btn btn-danger" onclick="exportToExcel()">Export to Excel</button>
-                <table>
-                    <thead>
+        <h2>Finished Payments</h2> 
+        <button class="btn btn-danger" onclick="exportToExcel()">Export to Excel</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Finished Payment</th>
+                    <th>Payment Method</th>
+                    <th>Payment Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($finishedBookings)) : ?>
+                    <?php foreach ($finishedBookings as $booking): ?>
                         <tr>
-                            <th>Name</th>
-                            <th>Finished Payment</th>
-                            <th>Payment Method</th>
-                            <th>Actions</th>
+                            <td><?php echo htmlspecialchars($booking['first_name'] . ' ' . $booking['last_name']); ?></td>
+                            <td><?php echo htmlspecialchars($booking['service_name']); ?></td>
+                            <td><?php echo htmlspecialchars($booking['payment_method']); ?></td>
+                            <td><?php echo htmlspecialchars($booking['payment_status']); ?></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (!empty($finishedBookings)) : ?>
-                            <?php foreach ($finishedBookings as $booking): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($booking['first_name'] . ' ' . $booking['last_name']); ?></td>
-                                    <td><?php echo htmlspecialchars($booking['service_name']); ?></td>
-                                    <td><?php echo htmlspecialchars($booking['payment_method']); ?></td>
-                                    <td>
-                                        <form method="post" action="payments.php" style="display:inline;">
-                                            <input type="hidden" name="booking_id" value="<?php echo htmlspecialchars($booking['booking_id']); ?>">
-                                            <select name="status">
-                                                <option value="pending" <?php echo $booking['payment_status'] === 'pending' ? 'selected' : ''; ?>>Pending</option>
-                                                <option value="finished" <?php echo $booking['payment_status'] === 'finished' ? 'selected' : ''; ?>>Finished</option>
-                                            </select>
-                                            <button type="submit" name="save">Save</button>
-                                        </form>
-                                        <form method="post" action="payments.php" style="display:inline;">
-                                            <input type="hidden" name="booking_id" value="<?php echo htmlspecialchars($booking['booking_id']); ?>">
-                                            <button type="submit" name="delete">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="4">No finished payments found.</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="3">No finished payments found.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
 
-                <h3>Total Payment: PHP <?php echo number_format($totalFinishedPayment, 2); ?></h3>
-            </div>
-        </div>
+        <h3>Total Payment: PHP <?php echo number_format($totalFinishedPayment, 2); ?></h3>
     </div>
 
     <!-- =========== Scripts =========  -->
@@ -240,27 +202,27 @@ try {
 
     <script>
     function exportToExcel() {
-      fetch('export_payment.php')
-        .then(response => {
-          if (response.ok) return response.blob();
-          throw new Error('Network response was not ok.');
-        })
-        .then(blob => {
-          // Create a new URL for the blob
-          const url = window.URL.createObjectURL(blob);
-          // Create a new <a> element for the download
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'payment.csv'; // Specify the file name for download
-          document.body.appendChild(a); // Append <a> to <body>
-          a.click(); // Simulate click on <a> to start download
-          window.URL.revokeObjectURL(url); // Clean up URL object
-          a.remove(); // Remove <a> from <body>
-        })
-        .catch(error => {
-          console.error('There was an error:', error);
-        });
+        fetch('export_payment.php')
+            .then(response => {
+                if (response.ok) return response.blob();
+                throw new Error('Network response was not ok.');
+            })
+            .then(blob => {
+                // Create a new URL for the blob
+                const url = window.URL.createObjectURL(blob);
+                // Create a new <a> element for the download
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'payment.csv'; // Specify the file name for download
+                document.body.appendChild(a); // Append <a> to <body>
+                a.click(); // Simulate click on <a> to start download
+                window.URL.revokeObjectURL(url); // Clean up URL object
+                a.remove(); // Remove <a> from <body>
+            })
+            .catch(error => {
+                console.error('There was an error:', error);
+            });
     }
-</script>
+    </script>
 </body>
 </html>

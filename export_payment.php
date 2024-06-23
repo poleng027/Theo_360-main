@@ -16,7 +16,7 @@ header('Content-Disposition: attachment; filename="' . $filename . '"');
 $output = fopen('php://output', 'w'); // Open output stream
 
 // Set column headers
-fputcsv($output, ['#', 'First Name', 'Last Name', 'Service Name', 'Payment Method','Date', 'Time', 'Total Payment', 'username']);
+fputcsv($output, ['#', 'First Name', 'Last Name', 'Service Name', 'Payment Method','Total Payment', 'username']);
 
 $rowNum = 1;
 foreach ($transactions as $transaction) {
@@ -28,8 +28,6 @@ foreach ($transactions as $transaction) {
         ucwords($transaction['last_name']),
         ucwords($transaction['service_name']),
         ucwords($transaction['payment_method']),
-        $formattedDate,
-        ucwords($transaction['time']),
         'PHP ' . number_format($transaction['service_price'], 2),
         ucwords($transaction['username'])
     ]);
