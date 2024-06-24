@@ -211,153 +211,151 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'], $_POST['first
         <a href="index.php" class="back-button">Back to Login</a>
     </div>
     <script>
-            $(document).ready(function() {
-            $('#submitBtn').prop('disabled', true);
+       $(document).ready(function() {
+    $('#submitBtn').prop('disabled', true);
 
-            // Function to validate individual input fields
-            function validateInput(input) {
-                switch (input.name) {
-                    case 'email':
-                        return validateEmail(input);
-                    case 'username':
-                        return validateUsername(input);
-                    case 'password':
-                        return validatePassword(input);
-                    case 'confirmPassword':
-                        return validateConfirmPassword(input);
-                    case 'pnum':
-                        return validatePhoneNumber(input);
-                    default:
-                        if (input.checkValidity()) {
-                            input.classList.remove("is-invalid");
-                            input.classList.add("is-valid");
-                            return true;
-                        } else {
-                            input.classList.remove("is-valid");
-                            input.classList.add("is-invalid");
-                            return false;
-                        }
-                }
-            }
-
-            // Function to validate email format
-            function validateEmail(emailInput) {
-                const email = emailInput.value;
-                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-                if (regex.test(email)) {
-                    emailInput.classList.remove("is-invalid");
-                    emailInput.classList.add("is-valid");
-                    $('#email-status').text('').css('color', 'green');
+    // Function to validate individual input fields
+    function validateInput(input) {
+        switch (input.name) {
+            case 'email':
+                return validateEmail(input);
+            case 'username':
+                return validateUsername(input);
+            case 'password':
+                return validatePassword(input);
+            case 'confirmPassword':
+                return validateConfirmPassword(input);
+            case 'pnum':
+                return validatePhoneNumber(input);
+            default:
+                if (input.checkValidity()) {
+                    input.classList.remove("is-invalid");
+                    input.classList.add("is-valid");
                     return true;
                 } else {
-                    emailInput.classList.remove("is-valid");
-                    emailInput.classList.add("is-invalid");
-                    $('#email-status').text('Invalid email format').css('color', 'red');
+                    input.classList.remove("is-valid");
+                    input.classList.add("is-invalid");
                     return false;
                 }
+        }
+    }
+
+    // Function to validate email format
+    function validateEmail(emailInput) {
+        const email = emailInput.value;
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (regex.test(email)) {
+            emailInput.classList.remove("is-invalid");
+            emailInput.classList.add("is-valid");
+            $('#email-status').text('').css('color', 'green');
+            return true;
+        } else {
+            emailInput.classList.remove("is-valid");
+            emailInput.classList.add("is-invalid");
+            $('#email-status').text('Invalid email format').css('color', 'red');
+            return false;
+        }
+    }
+
+    // Function to validate username
+    function validateUsername(usernameInput) {
+        const username = usernameInput.value;
+        const usernameStatus = $('#username-status');
+
+        if (username.length > 0) {
+            // Simulated asynchronous check (replace with actual logic)
+            // This example assumes check is successful
+            setTimeout(function() {
+                usernameInput.classList.remove("is-invalid");
+                usernameInput.classList.add("is-valid");
+                usernameStatus.text('Username available').css('color', 'green');
+            }, 1000); // Simulate delay
+            return true;
+        } else {
+            usernameInput.classList.remove("is-valid");
+            usernameInput.classList.add("is-invalid");
+            usernameStatus.text('').css('color', 'red');
+            return false;
+        }
+    }
+
+    // Function to validate password strength
+    function validatePassword(passwordInput) {
+        const password = passwordInput.value;
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+        if (regex.test(password)) {
+            passwordInput.classList.remove("is-invalid");
+            passwordInput.classList.add("is-valid");
+            $('#password-status').text('Password is strong').css('color', 'green');
+            return true;
+        } else {
+            passwordInput.classList.remove("is-valid");
+            passwordInput.classList.add("is-invalid");
+            $('#password-status').text('Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.').css('color', 'red');
+            return false;
+        }
+    }
+
+    // Function to validate password confirmation
+    function validateConfirmPassword(confirmPasswordInput) {
+        const passwordInput = document.querySelector("input[name='password']");
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        if (password === confirmPassword && password !== '') {
+            confirmPasswordInput.classList.remove("is-invalid");
+            confirmPasswordInput.classList.add("is-valid");
+            $('#confirm-password-status').text('Passwords match').css('color', 'green');
+            return true;
+        } else {
+            confirmPasswordInput.classList.remove("is-valid");
+            confirmPasswordInput.classList.add("is-invalid");
+            $('#confirm-password-status').text('Passwords do not match').css('color', 'red');
+            return false;
+        }
+    }
+
+    // Function to validate phone number format
+    function validatePhoneNumber(phoneInput) {
+        const phoneNumber = phoneInput.value;
+        const regex = /^\d{11}$/;
+
+        if (regex.test(phoneNumber)) {
+            phoneInput.classList.remove("is-invalid");
+            phoneInput.classList.add("is-valid");
+            $('#phone-status').text('Valid phone number').css('color', 'green');
+            return true;
+        } else {
+            phoneInput.classList.remove("is-valid");
+            phoneInput.classList.add("is-invalid");
+            $('#phone-status').text('Invalid phone number').css('color', 'red');
+            return false;
+        }
+    }
+
+    // Event listener for input changes
+    $('#signup-form input').on('input', function() {
+        validateInput(this);
+        validateForm();
+    });
+
+    // Function to validate the entire form
+    function validateForm() {
+        const inputs = document.querySelectorAll('#signup-form input');
+        let isValid = true;
+
+        inputs.forEach(input => {
+            if (!validateInput(input)) {
+                isValid = false;
             }
-
-            // Function to validate username
-            function validateUsername(usernameInput) {
-                const username = usernameInput.value;
-                const usernameStatus = $('#username-status');
-
-                if (username.length > 0) {
-                    // Simulated asynchronous check (replace with actual logic)
-                    // This example assumes check is successful
-                    setTimeout(function() {
-                        usernameInput.classList.remove("is-invalid");
-                        usernameInput.classList.add("is-valid");
-                        usernameStatus.text('Username available').css('color', 'green');
-                    }, 1000); // Simulate delay
-                    return true;
-                } else {
-                    usernameInput.classList.remove("is-valid");
-                    usernameInput.classList.add("is-invalid");
-                    usernameStatus.text('').css('color', 'red');
-                    return false;
-                }
-            }
-
-            // Function to validate password strength
-            function validatePassword(passwordInput) {
-                const password = passwordInput.value;
-                const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-
-                if (regex.test(password)) {
-                    passwordInput.classList.remove("is-invalid");
-                    passwordInput.classList.add("is-valid");
-                    $('#password-status').text('Password is strong').css('color', 'green');
-                    return true;
-                } else {
-                    passwordInput.classList.remove("is-valid");
-                    passwordInput.classList.add("is-invalid");
-                    $('#password-status').text('Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.').css('color', 'red');
-                    return false;
-                }
-            }
-
-            // Function to validate password confirmation
-            function validateConfirmPassword(confirmPasswordInput) {
-                const passwordInput = document.querySelector("input[name='password']");
-                const password = passwordInput.value;
-                const confirmPassword = confirmPasswordInput.value;
-
-                if (password === confirmPassword && password !== '') {
-                    confirmPasswordInput.classList.remove("is-invalid");
-                    confirmPasswordInput.classList.add("is-valid");
-                    $('#confirm-password-status').text('Passwords match').css('color', 'green');
-                    return true;
-                } else {
-                    confirmPasswordInput.classList.remove("is-valid");
-                    confirmPasswordInput.classList.add("is-invalid");
-                    $('#confirm-password-status').text('Passwords do not match').css('color', 'red');
-                    return false;
-                }
-            }
-
-            // Function to validate phone number format
-            function validatePhoneNumber(phoneInput) {
-                const phoneNumber = phoneInput.value;
-                const regex = /^\d{11}$/;
-
-                if (regex.test(phoneNumber)) {
-                    phoneInput.classList.remove("is-invalid");
-                    phoneInput.classList.add("is-valid");
-                    $('#phone-status').text('Valid phone number').css('color', 'green');
-                    return true;
-                } else {
-                    phoneInput.classList.remove("is-valid");
-                    phoneInput.classList.add("is-invalid");
-                    $('#phone-status').text('Invalid phone number').css('color', 'red');
-                    return false;
-                }
-            }
-
-            // Function to validate the entire form
-            function validateForm() {
-                const inputs = document.querySelectorAll('#signup-form input');
-                let isValid = true;
-
-                inputs.forEach(input => {
-                    if (!validateInput(input)) {
-                        isValid = false;
-                    }
-                });
-
-                $('#submitBtn').prop('disabled', !isValid);
-            }
-
-            // Event listener for input changes
-            $('#signup-form input').on('input', function() {
-                validateInput(this);
-                validateForm();
-            });
-
-            // Initial form validation
-            validateForm();
         });
+
+        $('#submitBtn').prop('disabled', !isValid);
+    }
+});
+
     </script>
 </body>
 </html>
